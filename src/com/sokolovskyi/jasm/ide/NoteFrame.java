@@ -22,26 +22,15 @@ class NoteFrame extends JFrame {
     //fonts
     private Font font;
 
-    //file menu
-    private JMenu fileMenu;
     private JMenuItem menuOpen;
     private JMenuItem menuSave;
     private JMenuItem menuExit;
 
-    //help menu
-    private JMenu helpMenu;
     private JMenuItem menuAbout;
 
-    //tools menu
-    private JMenu toolsMenu;
     private JMenuItem menuCompile;
 
-    //setiings menu
-    private JMenu settingsMenu;
     private JMenuItem menuFont;
-
-    //menu of color scheme
-    private JMenu menuColorScheme;
 
     //components of IDE
     private NoteAbout noteAbout;
@@ -111,7 +100,8 @@ class NoteFrame extends JFrame {
         Image icon = Toolkit.getDefaultToolkit().getImage("asserts/logo.png");
 
         //init file menu
-        fileMenu = new JMenu("File");
+        //file menu
+        JMenu fileMenu = new JMenu("File");
         fileMenu.setFont(font);
 
 
@@ -129,7 +119,8 @@ class NoteFrame extends JFrame {
 
 
         //init help menu
-        helpMenu = new JMenu("Help");
+        //help menu
+        JMenu helpMenu = new JMenu("Help");
         helpMenu.setFont(font);
 
         menuAbout = new JMenuItem("about");
@@ -138,7 +129,8 @@ class NoteFrame extends JFrame {
 
 
         //init tools menu
-        toolsMenu = new JMenu("Tools");
+        //tools menu
+        JMenu toolsMenu = new JMenu("Tools");
         toolsMenu.setFont(font);
 
         menuCompile = new JMenuItem("run \u2BC8\t");
@@ -147,14 +139,16 @@ class NoteFrame extends JFrame {
 
 
         //init setting menu
-        settingsMenu = new JMenu("Settings");
+        //settings menu
+        JMenu settingsMenu = new JMenu("Settings");
         settingsMenu.setFont(font);
 
         menuFont = new JMenuItem("font");
         menuFont.setFont(font);
         settingsMenu.add(menuFont);
 
-        menuColorScheme = new JMenu("color scheme");
+        //menu of color scheme
+        JMenu menuColorScheme = new JMenu("color scheme");
         menuColorScheme.setFont(font);
 
         //init colors
