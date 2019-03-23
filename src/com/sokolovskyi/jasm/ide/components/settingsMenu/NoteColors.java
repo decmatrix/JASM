@@ -4,9 +4,6 @@ import com.sokolovskyi.jasm.ide.components.panelComponents.NoteLineNumbering;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import java.io.*;
 
 public final class NoteColors {

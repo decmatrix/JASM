@@ -2,8 +2,6 @@ package com.sokolovskyi.jasm.ide.components.ideErrors;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class NoteError extends JDialog {
     private JButton ok;
@@ -36,4 +34,5 @@ public class NoteError extends JDialog {
         ok = new JButton("OK");
         ok.addActionListener(actionEvent -> setVisible(false));
     }
+    //the the the
 }
