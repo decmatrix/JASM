@@ -11,6 +11,8 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 class NoteFrame extends JFrame {
     //menu bar
@@ -96,8 +98,6 @@ class NoteFrame extends JFrame {
 
     @SuppressWarnings("Duplicates")
     private void initMenu() {
-        Image icon = Toolkit.getDefaultToolkit().getImage("asserts/logo.png");
-
         //init file menu
         //file menu
         JMenu fileMenu = new JMenu("File");
@@ -156,8 +156,6 @@ class NoteFrame extends JFrame {
 
         settingsMenu.add(menuColorScheme);
 
-
-
         menuBar.add(fileMenu);
         menuBar.add(helpMenu);
         menuBar.add(toolsMenu);
@@ -166,7 +164,8 @@ class NoteFrame extends JFrame {
 
         setJMenuBar(menuBar);
 
-        setIconImage(icon);
+        //TODO: trouble with icon, resizing
+        //setIconImage(new ImageIcon("./src/asserts/logo.png").getImage());
 
         setPreferredSize(new Dimension(270, 225));
         pack();
@@ -180,11 +179,20 @@ class NoteFrame extends JFrame {
         spane.setRowHeaderView(noteLineNumbering);
 
         JPanel panel = new JPanel(new BorderLayout());
+
         panel.add(spane, BorderLayout.CENTER);
         getContentPane().add(panel);
     }
 
     private void initListeners() {
+        //Listener of main window
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                noteColors.saveLastColors();
+            }
+        });
+
         //Listeners of textAre
         theText.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -204,7 +212,6 @@ class NoteFrame extends JFrame {
         });
 
         //Listeners of file menu
-
         menuExit.addActionListener(actionEvent -> {
             finalAction();
             System.exit(0);
@@ -218,12 +225,10 @@ class NoteFrame extends JFrame {
 
 
         //Listeners of help menu
-
         menuAbout.addActionListener(actionEvent -> noteAbout.setVisible(true));
 
 
         //Listeners of tools menu
-
         menuCompile.addActionListener(actionEvent -> {
             if(theText.getText().isEmpty()){
                 errorEmptyText.setVisible(true);
@@ -235,7 +240,6 @@ class NoteFrame extends JFrame {
 
 
         //Listeners of settings menu
-
         menuFont.addActionListener(actionEvent -> {
 
         });

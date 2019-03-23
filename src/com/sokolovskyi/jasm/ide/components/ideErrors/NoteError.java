@@ -34,5 +34,4 @@ public class NoteError extends JDialog {
         ok = new JButton("OK");
         ok.addActionListener(actionEvent -> setVisible(false));
     }
-    //the the the
 }

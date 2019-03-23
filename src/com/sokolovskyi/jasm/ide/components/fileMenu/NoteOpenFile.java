@@ -29,6 +29,7 @@ public class NoteOpenFile {
 
     public void initLastFile(){
         if(isEmptyLastFile()) return;
+
         readFile(new File(getLastFile()));
     }
 

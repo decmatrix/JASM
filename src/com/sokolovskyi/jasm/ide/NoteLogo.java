@@ -22,6 +22,9 @@ class NoteLogo extends JFrame{
 
     private void initLogo(){
 
+        //TODO: trouble with icon, resizing
+        //setIconImage(new ImageIcon("./src/asserts/logo64_64.png").getImage());
+
         JLabel logo = new JLabel();
         logo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asserts/logo.png")));
         logo.setHorizontalAlignment(JLabel.CENTER);

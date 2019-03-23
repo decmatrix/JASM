@@ -3,6 +3,8 @@ package com.sokolovskyi.jasm.compiler;
 import com.sokolovskyi.jasm.compiler.lexemes.LexemesTable;
 import com.sokolovskyi.jasm.compiler.parser.ParserLexemesTables;
 import com.sokolovskyi.jasm.compiler.parser.TextParser;
+import com.sokolovskyi.jasm.compiler.syntax.ParserSentencesTable;
+import com.sokolovskyi.jasm.compiler.syntax.SentenceTable;
 
 import java.util.ArrayList;
 
@@ -28,8 +30,10 @@ public class Compile implements Runnable{
         }
 
 
-        //for debugging
-        Debugger.outLexemesTables(tablesList);
+        SentenceTable[] tables = ParserSentencesTable.getTablesFromLexemsTable(tablesList);
 
+
+        //for debugging
+        Debugger.outLSTables(tablesList, tables);
     }
 }
