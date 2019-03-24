@@ -36,15 +36,13 @@ final class Debugger {
 
     static void outLSTables(ArrayList<LexemesTable[]> tables, SentenceTable[] stables){
         System.out.println("\n***************DEBUG TABLE OF LEXEMES & SENTENCES***************\n");
-        for (LexemesTable[] table : tables) {
+        for (int  i = 0; i < tables.size(); i++) {
             System.out.println("\n-----------------------------------");
 
-           outLexemeTable(table);
+           outLexemeTable(tables.get(i));
 
-            for(SentenceTable stable : stables){
-                System.out.println("************************************");
-                System.out.println(stable);
-            }
+            System.out.println("************************************");
+            System.out.println(stables[i]);
         }
     }
 

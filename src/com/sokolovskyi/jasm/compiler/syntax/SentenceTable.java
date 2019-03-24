@@ -9,21 +9,21 @@ public class SentenceTable {
     /* fields of table */
 
     //field labels
-    private int labelName = 0;
+    private int labelName = -1;
 
     //field mnemonic
-    private int lexemeMnemonic = 0;
+    private int lexemeMnemonic = -1;
     private int countLexemeMnemonic = 0;
 
     //field #1 operand
-    private int firstOperand = 0;
+    private int firstOperand = -1;
     private int countFirstOperand = 0;
 
     //field #2 operand
-    private int secondOperand = 0;
+    private int secondOperand = -1;
     private int countSecondOperand = 0;
 
-    public SentenceTable(LexemesTable[] tables){
+    SentenceTable(LexemesTable[] tables){
         this.tables = tables;
         parseLine();
     }
@@ -50,33 +50,51 @@ public class SentenceTable {
     }
 
     private void parseLexemeMnemonic(){
-        for(int i = labelName; i < tables.length; i++){
+        int pos;
+
+        if(labelName == -1){
+            pos = 0;
+        }else{
+            pos = labelName;
+        }
+
+        for(int i = pos; i < tables.length; i++){
             if(isMnemonic(tables[i])){
                 lexemeMnemonic = i;
                 break;
             }
         }
 
-        //TODO; while is count  = 0
-        countLexemeMnemonic = 0;
+        //TODO; while is count  = 1
+        countLexemeMnemonic = 1;
     }
 
     private void parseFirstOperand(){
-        for(int i = lexemeMnemonic + countLexemeMnemonic + 1; i < tables.length; i++){
+        if(lexemeMnemonic == -1) return;
+
+        for(int i = lexemeMnemonic + countLexemeMnemonic - 1; i < tables.length; i++){
             if(isOperand(tables[i])){
                 firstOperand = i;
                 break;
             }
         }
 
+        if(firstOperand == -1) return;
+
         for(int i = firstOperand; i < tables.length; i++){
             if(tables[i].getLexeme().equals(",")){
-                countFirstOperand = i - firstOperand;
+                countFirstOperand = i - firstOperand ;
             }
+        }
+
+        if(countFirstOperand == 0){
+            countFirstOperand = tables.length - firstOperand;
         }
     }
 
     private void parseSecondOperand(){
+        if(firstOperand == -1) return;
+
         for(int i = firstOperand + countFirstOperand + 1; i < tables.length; i++){
             if(isOperand(tables[i])){
                 secondOperand = i;
@@ -84,7 +102,9 @@ public class SentenceTable {
             }
         }
 
-        if(secondOperand != 0) countSecondOperand = tables.length - 1 - secondOperand;
+        if(secondOperand == -1) return;
+
+        countSecondOperand = tables.length - secondOperand;
     }
 
     private boolean isLabel(LexemesTable table){
@@ -109,11 +129,9 @@ public class SentenceTable {
 
         lexeme = table.getLexeme();
 
-        if(lexeme.equals("(") || lexeme.equals("[") || lexeme.equals("-") || lexeme.equals("+")){
-            return true;
-        }
+        return lexeme.equals("(") || lexeme.equals("[") || lexeme.equals("-") || lexeme.equals("+") || lexeme.equals("word") ||
+                lexeme.equals("dword") || lexeme.equals("byte");
 
-        return false;
     }
 
     @Override
