@@ -1,7 +1,7 @@
 package com.sokolovskyi.jasm.compiler.syntax;
 
-import com.sokolovskyi.jasm.compiler.lexemes.Lexemes;
-import com.sokolovskyi.jasm.compiler.lexemes.LexemesTable;
+import com.sokolovskyi.jasm.compiler.Lexis.Lexemes;
+import com.sokolovskyi.jasm.compiler.Lexis.LexemesTable;
 
 public class SentenceTable {
     private LexemesTable[] tables;
@@ -9,24 +9,54 @@ public class SentenceTable {
     /* fields of table */
 
     //field labels
-    private int labelName = -1;
+    private int posLabelName = -1;
 
     //field mnemonic
-    private int lexemeMnemonic = -1;
+    private int posLexemeMnemonic = -1;
     private int countLexemeMnemonic = 0;
 
     //field #1 operand
-    private int firstOperand = -1;
+    private int posFirstOperand = -1;
     private int countFirstOperand = 0;
 
     //field #2 operand
-    private int secondOperand = -1;
+    private int posSecondOperand = -1;
     private int countSecondOperand = 0;
 
-    SentenceTable(LexemesTable[] tables){
+    public SentenceTable(LexemesTable[] tables){
         this.tables = tables;
         parseLine();
     }
+
+    //getters
+    public int getPosLabelName(){
+        return posLabelName;
+    }
+
+    public int getPosLexemeMnemonic(){
+        return posLexemeMnemonic;
+    }
+
+    public int getCountLexemeMnemonic(){
+        return countLexemeMnemonic;
+    }
+
+    public int getPosFirstOperand(){
+        return posFirstOperand;
+    }
+
+    public int getCountFirstOperand(){
+        return countFirstOperand;
+    }
+
+    public int getPosSecondOperand(){
+        return posSecondOperand;
+    }
+
+    public int getCountSecondOperand(){
+        return countSecondOperand;
+    }
+    //end getters
 
     private boolean checkSentence(){
         //TODO: release effective algorithm
@@ -42,8 +72,10 @@ public class SentenceTable {
 
     private void parseLabelName(){
         for(int i = 0; i < tables.length; i++){
+            if(isMnemonic(tables[i])) break;
+
             if(isLabel(tables[i])){
-                labelName = i;
+                posLabelName = i;
                 break;
             }
         }
@@ -52,59 +84,63 @@ public class SentenceTable {
     private void parseLexemeMnemonic(){
         int pos;
 
-        if(labelName == -1){
+        if(posLabelName == -1){
             pos = 0;
         }else{
-            pos = labelName;
+            pos = posLabelName;
         }
 
         for(int i = pos; i < tables.length; i++){
             if(isMnemonic(tables[i])){
-                lexemeMnemonic = i;
+                posLexemeMnemonic = i;
                 break;
             }
         }
 
         //TODO; while is count  = 1
-        countLexemeMnemonic = 1;
+        if(posLexemeMnemonic == -1){
+            countLexemeMnemonic = 0;
+        }else{
+            countLexemeMnemonic = 1;
+        }
     }
 
     private void parseFirstOperand(){
-        if(lexemeMnemonic == -1) return;
+        if(posLexemeMnemonic == -1) return;
 
-        for(int i = lexemeMnemonic + countLexemeMnemonic - 1; i < tables.length; i++){
+        for(int i = posLexemeMnemonic + countLexemeMnemonic - 1; i < tables.length; i++){
             if(isOperand(tables[i])){
-                firstOperand = i;
+                posFirstOperand = i;
                 break;
             }
         }
 
-        if(firstOperand == -1) return;
+        if(posFirstOperand == -1) return;
 
-        for(int i = firstOperand; i < tables.length; i++){
+        for(int i = posFirstOperand; i < tables.length; i++){
             if(tables[i].getLexeme().equals(",")){
-                countFirstOperand = i - firstOperand ;
+                countFirstOperand = i - posFirstOperand;
             }
         }
 
         if(countFirstOperand == 0){
-            countFirstOperand = tables.length - firstOperand;
+            countFirstOperand = tables.length - posFirstOperand;
         }
     }
 
     private void parseSecondOperand(){
-        if(firstOperand == -1) return;
+        if(posFirstOperand == -1) return;
 
-        for(int i = firstOperand + countFirstOperand + 1; i < tables.length; i++){
+        for(int i = posFirstOperand + countFirstOperand + 1; i < tables.length; i++){
             if(isOperand(tables[i])){
-                secondOperand = i;
+                posSecondOperand = i;
                 break;
             }
         }
 
-        if(secondOperand == -1) return;
+        if(posSecondOperand == -1) return;
 
-        countSecondOperand = tables.length - secondOperand;
+        countSecondOperand = tables.length - posSecondOperand;
     }
 
     private boolean isLabel(LexemesTable table){
@@ -136,7 +172,11 @@ public class SentenceTable {
 
     @Override
     public String toString() {
-        return "Sentence: " + labelName + " | " + lexemeMnemonic + " (" + countLexemeMnemonic + ") | " +  firstOperand +
-                " (" + countFirstOperand + ") | " + secondOperand + " (" + countSecondOperand + ")" + " |";
+        String ln = posLabelName == -1 ? "NONE" : posLabelName +"";
+        String lm = posLexemeMnemonic == -1 ? "NONE" : posLexemeMnemonic + " (" + countLexemeMnemonic + ")";
+        String fo = posFirstOperand == -1 ? "NONE" : posFirstOperand + " (" + countFirstOperand + ")";
+        String so = posSecondOperand == -1 ? "NONE" : posSecondOperand + " (" + countSecondOperand + ")";
+
+        return "Sentence: " + ln + " | " + lm + " | " +  fo + " | " + so + " |";
     }
 }

@@ -17,26 +17,21 @@ public class NoteLineNumbering extends JTextArea {
         setEditable(false);
     }
 
-    public void updateLineNumbers()
-    {
+    public void updateLineNumbers() {
         String lineNumbersText = getLineNumbersText();
         setText(lineNumbersText);
     }
 
 
-    private String getLineNumbersText()
-    {
+    private String getLineNumbersText() {
         int caretPosition = theText.getDocument().getLength();
         Element root = theText.getDocument().getDefaultRootElement();
         StringBuilder lineNumbersTextBuilder = new StringBuilder();
 
-        for (int elementIndex = 1; elementIndex < root.getElementIndex(caretPosition) + 2; elementIndex++)
-        {
+        for (int elementIndex = 1; elementIndex < root.getElementIndex(caretPosition) + 2; elementIndex++) {
             lineNumbersTextBuilder.append(elementIndex).append(" ").append(System.lineSeparator());
         }
 
         return lineNumbersTextBuilder.toString();
     }
-
-
 }

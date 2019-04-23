@@ -1,4 +1,4 @@
-package com.sokolovskyi.jasm.compiler.lexemes;
+package com.sokolovskyi.jasm.compiler.Lexis;
 
 
 

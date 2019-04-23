@@ -70,7 +70,6 @@ public class NoteOpenFile {
     }
 
 
-
     private void readFile(File file){
         try(FileReader fr = new FileReader(file)){
             textArea.setText(null);

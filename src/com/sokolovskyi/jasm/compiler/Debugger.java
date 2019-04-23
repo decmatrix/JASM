@@ -1,8 +1,10 @@
 package com.sokolovskyi.jasm.compiler;
 
-import com.sokolovskyi.jasm.compiler.lexemes.LexemesTable;
+import com.sokolovskyi.jasm.compiler.Lexis.LexemesTable;
 import com.sokolovskyi.jasm.compiler.syntax.SentenceTable;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 final class Debugger {
@@ -35,15 +37,36 @@ final class Debugger {
     }
 
     static void outLSTables(ArrayList<LexemesTable[]> tables, SentenceTable[] stables){
-        System.out.println("\n***************DEBUG TABLE OF LEXEMES & SENTENCES***************\n");
-        for (int  i = 0; i < tables.size(); i++) {
-            System.out.println("\n-----------------------------------");
 
-           outLexemeTable(tables.get(i));
 
-            System.out.println("************************************");
-            System.out.println(stables[i]);
+        try(FileWriter writer = new FileWriter("./src/tmp/out.salt")){
+            for (int  i = 0; i < tables.size(); i++) {
+                int j = 0;
+
+
+                writer.write("-----------------------------------\n");
+                for (LexemesTable lexemesTable : tables.get(i)) {
+                    writer.write(j + ") " + lexemesTable + "\n");
+                    j++;
+                }
+                writer.write("************************************\n");
+                writer.write("label | mnemocode | 1 operand | 2 operand\n");
+                writer.write(stables[i]+"\n");
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+            System.exit(1);
         }
+
+        //System.out.println("\n***************DEBUG TABLE OF LEXEMES & SENTENCES***************\n");
+        //for (int  i = 0; i < tables.size(); i++) {
+            //System.out.println("\n-----------------------------------");
+
+           //outLexemeTable(tables.get(i));
+
+            //System.out.println("************************************");
+            //System.out.println(stables[i]);
+        //}
     }
 
 }

@@ -1,6 +1,6 @@
 package com.sokolovskyi.jasm.ide;
 
-import com.sokolovskyi.jasm.compiler.Compile;
+import com.sokolovskyi.jasm.ide.components.NoteCompile;
 import com.sokolovskyi.jasm.ide.components.fileMenu.NoteOpenFile;
 import com.sokolovskyi.jasm.ide.components.helpMenu.NoteAbout;
 import com.sokolovskyi.jasm.ide.components.ideErrors.NoteError;
@@ -45,7 +45,7 @@ class NoteFrame extends JFrame {
 
      NoteFrame() {
         super("JASM");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //init ide
         initTextArea();
@@ -164,7 +164,7 @@ class NoteFrame extends JFrame {
 
         setJMenuBar(menuBar);
 
-        //TODO: trouble with icon, resizing
+        //FIXME trouble with icon, resizing
         //setIconImage(new ImageIcon("./src/asserts/logo.png").getImage());
 
         setPreferredSize(new Dimension(270, 225));
@@ -230,11 +230,12 @@ class NoteFrame extends JFrame {
 
         //Listeners of tools menu
         menuCompile.addActionListener(actionEvent -> {
+            //FIXME create new algorithm
             if(theText.getText().isEmpty()){
                 errorEmptyText.setVisible(true);
             }
             else{
-                new Thread(new Compile(theText.getText())).start();
+                new NoteCompile(font, theText.getText());
             }
         });
 
