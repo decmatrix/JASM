@@ -34,7 +34,7 @@ package com.sokolovskyi.jasm.compiler.Lexis;
     //directives
     public final static String[] DIRECTIVES = {"SEGMENT", "ENDS", "END", "DWORD", "WORD", "PTR", "BYTE"};
     //data types
-    public final static String[] DATATYPES = {"DB", "DW", "DD"};
+    public final static String[] DATA_TYPES = {"DB", "DW", "DD"};
     //assembly commands
     public final static String[] ASM_COMMANDS = {"CLI", "INC", "DEC", "ADD", "OR", "AND",
     "MOV", "CMP", "JB", "JMP"};

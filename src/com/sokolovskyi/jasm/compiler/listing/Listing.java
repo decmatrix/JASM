@@ -1,20 +1,34 @@
 package com.sokolovskyi.jasm.compiler.listing;
 
+import com.sokolovskyi.jasm.compiler.Lexis.Lexemes;
+import com.sokolovskyi.jasm.compiler.Lexis.LexemesTable;
+
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Listing {
     private final String pathListing = "./src/tmp/list.lst";
+    private String[] sourceCodeArr;
+    private ArrayList<LexemesTable[]> tablesOfLexemes;
+    private String[] errors;
 
-    public Listing(){
+    public Listing(String sourceCode, ArrayList<LexemesTable[]> tablesOfLexemes, String[] errors){
+        sourceCodeArr = sourceCode.split("\n");
+
+        this.tablesOfLexemes = tablesOfLexemes;
+        this.errors = errors;
+
         initListing();
     }
 
     private void initListing(){
-        try(FileWriter writer = new FileWriter(pathListing)){
+
+        try(FileWriter writer = new FileWriter(pathListing);){
+
             writer.write("\t\t\tJASM Java Assembly Compiler v.0.3 beta \t\t" +  new Date() + '\n');
-            writer.write("\t\t\t\tby Sokolovskyi Bohdan FAM KPI KV-73\n");
+            writer.write("\t\t\t\tby Sokolovskyi Bohdan FAM KPI KV-73\n\n");
 
             //write in Listing
             writeMachineCommands(writer);
@@ -27,8 +41,92 @@ public class Listing {
         }
     }
 
+
+    //TODO rebuild logic of listing formation
     private void writeMachineCommands(FileWriter writer) throws IOException{
-        
+        int adress = 0x0;
+        String buff;
+        LexemesTable[] buffTable;
+        String opcode;
+
+        for(int i = 0; i < sourceCodeArr.length; i++){
+
+            //str of source code contains empty string
+            if(sourceCodeArr[i].equals("")){
+                writer.write("     " + sourceCodeArr[i] + '\n');
+                continue;
+            }
+
+            //END
+            if(tablesOfLexemes.get(i).length > 0 && tablesOfLexemes.get(i)[0].getLexeme().toUpperCase().equals(Lexemes.DIRECTIVES[2])){
+                writer.write("     " + sourceCodeArr[i] + '\n');
+                continue;
+            }
+
+            //start machine commands
+            buff = sourceCodeArr[i].toUpperCase();
+            buffTable = tablesOfLexemes.get(i);
+
+            //SEGMENT , ENDS
+            if(buff.contains(Lexemes.DIRECTIVES[0]) || buff.contains(Lexemes.DIRECTIVES[1])){
+                adress = 0x0;
+                writer.write(Adress.getStrAdress(adress) + "   " + sourceCodeArr[i] + '\n');
+                continue;
+            }
+
+            //data types, dec, inc
+            if(buffTable.length > 2) {
+                //data types
+                if (buffTable[0].getLinkLexeme().equals(Lexemes.IDENTIFIER) &&
+                        buffTable[1].getLinkLexeme().equals(Lexemes.DATATYPE)) {
+                    opcode = Opcode.calcOpcodeDATATYPE(buffTable);
+                    writer.write(Adress.getStrAdress(adress) + " " + opcode.toUpperCase() + " " + sourceCodeArr[i] + '\n');
+                    adress = Adress.calcAdressDATATYPE(buffTable, adress);
+                }
+
+                //dec
+                if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[2])){
+                    opcode = Opcode.calcOpcodeDEC(buffTable);
+                    writer.write(Adress.getStrAdress(adress) + " " + opcode.toUpperCase() + " " + sourceCodeArr[i] + '\n');
+                    adress += 0x4;
+                    continue;
+                }
+
+                //add
+                if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[3])){
+                    opcode = Opcode.calcOpcodeADD(buffTable);
+                    writer.write(Adress.getStrAdress(adress) + " " + opcode.toUpperCase() + " " + sourceCodeArr[i] + '\n');
+                    adress = Adress.calcAdressADD(buffTable, adress);
+                    continue;
+                }
+            }
+
+            //cli
+            if(buff.contains(Lexemes.ASM_COMMANDS[0])){
+                opcode = "FA";
+                writer.write(Adress.getStrAdress(adress) + " " + opcode + " " + sourceCodeArr[i] + '\n');
+                adress += 0x1;
+                continue;
+            }
+
+            //inc
+            if(buffTable.length > 0){
+                //inc
+                if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[1])){
+                    opcode = Opcode.calcOpcodeINC(buffTable);
+                    writer.write(Adress.getStrAdress(adress) + " " + opcode.toUpperCase() + " " + sourceCodeArr[i] + '\n');
+                    adress = Adress.calcAdressINC(buffTable, adress);
+                    continue;
+                }
+            }
+
+            /*
+
+            //TODO or fix size
+            adress = calcAdressOR(buffTable, adress);
+            */
+
+        }
     }
 
     private void writeSegmentTable(FileWriter writer) throws IOException{
@@ -37,5 +135,27 @@ public class Listing {
 
     private void writeIdTable(FileWriter writer)throws IOException{
 
+    }
+
+    private int calcAdressMOV(LexemesTable[] buffTable, int adress){
+        if(buffTable.length > 0){
+            if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[6])){
+                if(buffTable[1].getLinkLexeme().equals(Lexemes.REGISTER_8)){
+                    return adress + 0x1;
+                }
+            }
+        }
+
+        return adress;
+    }
+
+    private int calcAdressOR(LexemesTable[] buffTable, int adress){
+        if(buffTable.length > 0){
+            if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[4])){
+                return adress + 0x4;
+            }
+        }
+
+        return adress;
     }
 }

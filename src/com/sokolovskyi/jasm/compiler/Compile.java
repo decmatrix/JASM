@@ -1,15 +1,11 @@
 package com.sokolovskyi.jasm.compiler;
 
-import com.sokolovskyi.jasm.compiler.Debugger;
 import com.sokolovskyi.jasm.compiler.Lexis.LexemesTable;
-import com.sokolovskyi.jasm.compiler.Lexis.exceptions.LexicalExcHandler;
-import com.sokolovskyi.jasm.compiler.Lexis.exceptions.LexicalException;
 import com.sokolovskyi.jasm.compiler.listing.Listing;
 import com.sokolovskyi.jasm.compiler.parser.ParserLexemesTables;
 import com.sokolovskyi.jasm.compiler.parser.TextParser;
 import com.sokolovskyi.jasm.compiler.parser.ParserSentencesTable;
 import com.sokolovskyi.jasm.compiler.syntax.SentenceTable;
-import com.sokolovskyi.jasm.compiler.syntax.exceptions.SyntacticExcHandler;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -21,6 +17,10 @@ public class Compile implements Runnable{
     //for result
     private ArrayList<LexemesTable[]> tablesOfLexemes;
     private SentenceTable[] tablesOfSentences;
+
+
+    //array of errors
+    private String[] errors;
 
 
     public Compile(String text, String pathToCompileFile){
@@ -49,11 +49,10 @@ public class Compile implements Runnable{
         try(FileWriter writer = new FileWriter(pathFile)){
             for(int i = 0; i < tablesOfLexemes.size(); i++){
 
-
                 if(lines[i].equals("")) continue;
                 lines[i] = lines[i].trim();
 
-                writer.write("\n\n" + lines[i] + '\n');
+                writer.write("\n\n" + i + ") " + lines[i] + '\n');
                 writer.write("=============================================\n");
 
                 for(int j = 0; j < tablesOfLexemes.get(i).length; j++){
@@ -76,6 +75,10 @@ public class Compile implements Runnable{
         }
     }
 
+    private void initErrorsList(){
+
+    }
+
     @Override
     public void run() {
         //get parsed text
@@ -89,20 +92,23 @@ public class Compile implements Runnable{
             tablesOfLexemes.add(ParserLexemesTables.getTablesFromLine(strings));
         }
 
-        //catch lexical exception
-        //TODO come up with return exception in IDE
-        try {
-            LexicalExcHandler.catchException(tablesOfLexemes);
-        }catch (LexicalException e){
-          //TODO clean this line
-          System.exit(1);
-        }
-
         //create tables (Syntactic analysis)
         tablesOfSentences = ParserSentencesTable.getTablesFromLexemsTable(tablesOfLexemes);
 
+        //TODO see in doc of course work
+
+
+        //TODO create table of vars in asm
+
+
+        //TODO parse lexical errors
+
+
+        //TODO parse syntactic errors
+
+
         //create listing file
-        Listing listing = new Listing();
+        Listing listing = new Listing(text, tablesOfLexemes, errors);
 
         //write in file
         writeResultCompilation();

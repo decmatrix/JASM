@@ -1,7 +1,5 @@
 package com.sokolovskyi.jasm.compiler.Lexis;
 
-import com.sokolovskyi.jasm.compiler.Lexis.Lexemes;
-
 @SuppressWarnings("Duplicates")
 public class Mnemonic {
     public static boolean correctSize(String word){
@@ -49,7 +47,7 @@ public class Mnemonic {
     }
 
     static boolean isDataType(String word){
-        for(String str : Lexemes.DATATYPES){
+        for(String str : Lexemes.DATA_TYPES){
             if(word.equals(str)) return true;
         }
 
