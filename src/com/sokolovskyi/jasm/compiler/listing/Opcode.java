@@ -1,8 +1,7 @@
 package com.sokolovskyi.jasm.compiler.listing;
 
-import com.sokolovskyi.jasm.compiler.Lexis.Lexemes;
-import com.sokolovskyi.jasm.compiler.Lexis.LexemesTable;
-import jdk.nashorn.internal.runtime.regexp.joni.constants.OPCode;
+import com.sokolovskyi.jasm.compiler.lexis.Lexemes;
+import com.sokolovskyi.jasm.compiler.lexis.LexemesTable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +15,7 @@ final class Opcode {
     private static Map<String, String> regs8mrm;
     private static Map<String, String> regs32mrm;
 
+    //FIXME it is a no-go, rebuild and don't use static {} !!!
     static{
         regs32 = new HashMap<>();
         regs8 = new HashMap<>();
@@ -152,7 +152,7 @@ final class Opcode {
         String opcode = "FE 4C";
 
         if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[2])){
-            opcode = Opcode.calcEfAdressOpcode(opcode, buffTable);
+            opcode = Opcode.calcEfAdressOpcode(opcode, buffTable, 3);
         }
 
         return opcode;
@@ -190,16 +190,12 @@ final class Opcode {
             if (buffTable[1].getLinkLexeme().equals(Lexemes.REGISTER_32)) {
                 opcode = "0B ";
                 opcode += regs32mrm.get(buffTable[1].getLexeme().toUpperCase());
-                opcode = calcEfAdressOpcode(opcode, buffTable);
-
-                return opcode;
             } else if (buffTable[1].getLinkLexeme().equals(Lexemes.REGISTER_8)) {
                 opcode = "0A ";
                 opcode += regs8mrm.get(buffTable[1].getLexeme().toUpperCase());
-                opcode = calcEfAdressOpcode(opcode, buffTable);
-
-                return opcode;
             }
+
+            opcode = calcEfAdressOpcode(opcode, buffTable, 3);
         }
 
 
@@ -208,9 +204,44 @@ final class Opcode {
         return opcode;
     }
 
-    private static String calcEfAdressOpcode(String opcode, LexemesTable[] buffTable){
-        String buff  = Integer.toHexString(Integer.parseInt("00" + regs32.get(buffTable[6].getLexeme().toUpperCase()) +
-                regs32.get(buffTable[4].getLexeme().toUpperCase()), 2));
+    static String calcOpcodeAND(LexemesTable[] buffTable){
+        String opcode = "";
+
+        if (buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[5])) {
+            int pos = 0;
+            for(int i = 0; i < buffTable.length; i++){
+                if(buffTable[i].getLexeme().equals(Lexemes.LITERALS[0])){
+                    pos = i;
+                    break;
+                }
+            }
+
+            pos++;
+
+            if(buffTable[pos].getLinkLexeme().equals(Lexemes.REGISTER_8)){
+                opcode = "20 ";
+                opcode += regs8mrm.get(buffTable[pos].getLexeme().toUpperCase());
+            }
+            else if(buffTable[pos].getLinkLexeme().equals(Lexemes.REGISTER_32)){
+                opcode = "21 ";
+                opcode += regs32mrm.get(buffTable[pos].getLexeme().toUpperCase());
+            }
+
+            opcode = calcEfAdressOpcode(opcode, buffTable, 1);
+        }
+
+        return opcode;
+    }
+
+    static String calcOpcodeMOV(LexemesTable[] buffTable){
+        String opcode = "";
+
+        return opcode;
+    }
+
+    private static String calcEfAdressOpcode(String opcode, LexemesTable[] buffTable, int pos){
+        String buff  = Integer.toHexString(Integer.parseInt("00" + regs32.get(buffTable[pos + 3].getLexeme().toUpperCase()) +
+                regs32.get(buffTable[pos + 1].getLexeme().toUpperCase()), 2));
 
         if(buff.length() == 1){
             buff = "0" + buff;
@@ -218,8 +249,8 @@ final class Opcode {
 
         opcode += buff;
 
-        if(buffTable[7].getLexeme().toUpperCase().equals(Lexemes.LITERALS[1])){
-            buff = Integer.toHexString(Integer.parseInt(buffTable[8].getLexeme()));
+        if(buffTable[pos + 4].getLexeme().toUpperCase().equals(Lexemes.LITERALS[1])){
+            buff = Integer.toHexString(Integer.parseInt(buffTable[pos + 5].getLexeme()));
             if(buff.length() == 1){
                 buff = "0" + buff;
             }

@@ -1,7 +1,7 @@
 package com.sokolovskyi.jasm.compiler.listing;
 
-import com.sokolovskyi.jasm.compiler.Lexis.Lexemes;
-import com.sokolovskyi.jasm.compiler.Lexis.LexemesTable;
+import com.sokolovskyi.jasm.compiler.lexis.Lexemes;
+import com.sokolovskyi.jasm.compiler.lexis.LexemesTable;
 
 final class Adress {
 
@@ -59,6 +59,12 @@ final class Adress {
                 return adress + 0x2;
             }
         }
+
+        return adress;
+    }
+
+    static int calcAdressMOV(String opcode, int adress){
+
 
         return adress;
     }

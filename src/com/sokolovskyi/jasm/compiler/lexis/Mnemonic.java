@@ -1,4 +1,4 @@
-package com.sokolovskyi.jasm.compiler.Lexis;
+package com.sokolovskyi.jasm.compiler.lexis;
 
 @SuppressWarnings("Duplicates")
 public class Mnemonic {

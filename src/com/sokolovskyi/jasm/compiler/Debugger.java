@@ -1,6 +1,6 @@
 package com.sokolovskyi.jasm.compiler;
 
-import com.sokolovskyi.jasm.compiler.Lexis.LexemesTable;
+import com.sokolovskyi.jasm.compiler.lexis.LexemesTable;
 import com.sokolovskyi.jasm.compiler.syntax.SentenceTable;
 
 import java.io.FileWriter;

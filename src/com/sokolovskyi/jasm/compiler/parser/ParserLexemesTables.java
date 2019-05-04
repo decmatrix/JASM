@@ -1,6 +1,6 @@
 package com.sokolovskyi.jasm.compiler.parser;
 
-import com.sokolovskyi.jasm.compiler.Lexis.LexemesTable;
+import com.sokolovskyi.jasm.compiler.lexis.LexemesTable;
 
 public class ParserLexemesTables {
 

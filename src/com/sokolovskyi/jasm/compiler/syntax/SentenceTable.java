@@ -1,7 +1,7 @@
 package com.sokolovskyi.jasm.compiler.syntax;
 
-import com.sokolovskyi.jasm.compiler.Lexis.Lexemes;
-import com.sokolovskyi.jasm.compiler.Lexis.LexemesTable;
+import com.sokolovskyi.jasm.compiler.lexis.Lexemes;
+import com.sokolovskyi.jasm.compiler.lexis.LexemesTable;
 
 public class SentenceTable {
     private LexemesTable[] tables;

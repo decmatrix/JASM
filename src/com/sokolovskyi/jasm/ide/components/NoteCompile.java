@@ -39,7 +39,7 @@ public class NoteCompile extends JFrame{
     private void compile(){
         new Thread(new Compile(programText, TMP_COMPILE_FILE)).start();
 
-        try(FileReader reader = new FileReader(TMP_COMPILE_FILE)){
+       /* try(FileReader reader = new FileReader(TMP_COMPILE_FILE)){
             BufferedReader br = new BufferedReader(reader);
 
             String line = br.readLine();
@@ -54,7 +54,7 @@ public class NoteCompile extends JFrame{
         }catch (IOException e){
             e.printStackTrace();
             System.exit(1);
-        }
+        }*/
     }
 
     private void initTextArea(){

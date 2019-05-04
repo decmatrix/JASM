@@ -1,7 +1,7 @@
 package com.sokolovskyi.jasm.compiler.listing;
 
-import com.sokolovskyi.jasm.compiler.Lexis.Lexemes;
-import com.sokolovskyi.jasm.compiler.Lexis.LexemesTable;
+import com.sokolovskyi.jasm.compiler.lexis.Lexemes;
+import com.sokolovskyi.jasm.compiler.lexis.LexemesTable;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,6 +13,8 @@ public class Listing {
     private String[] sourceCodeArr;
     private ArrayList<LexemesTable[]> tablesOfLexemes;
     private String[] errors;
+
+    private int countErrors;
 
     public Listing(String sourceCode, ArrayList<LexemesTable[]> tablesOfLexemes, String[] errors){
         sourceCodeArr = sourceCode.split("\n");
@@ -48,7 +50,16 @@ public class Listing {
         LexemesTable[] buffTable;
         String opcode;
 
+        countErrors = 0;
+
         for(int i = 0; i < sourceCodeArr.length; i++){
+            //errors
+            System.out.println(errors[i]);
+            if(errors[i] != null){
+                writer.write("0000 " + "??? " + sourceCodeArr[i] + errors[i] + '\n');
+                countErrors++;
+                continue;
+            }
 
             //str of source code contains empty string
             if(sourceCodeArr[i].trim().equals("")){
@@ -127,7 +138,26 @@ public class Listing {
                 adress += 0x4;
                 continue;
             }
+
+            //and
+            if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[5])){
+                opcode = Opcode.calcOpcodeAND(buffTable);
+                writer.write(Adress.getStrAdress(adress) + " " + opcode + " " + sourceCodeArr[i] + '\n');
+                adress += 0x4;
+                continue;
+            }
+
+            //mov
+            if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[6])){
+                opcode = Opcode.calcOpcodeMOV(buffTable);
+                writer.write(Adress.getStrAdress(adress) + " " + opcode + " " + sourceCodeArr[i] + '\n');
+                adress += Adress.calcAdressMOV(opcode, adress);
+                continue;
+            }
         }
+
+        //count errors
+        writer.write("\t" + countErrors + " Errors\n");
     }
 
     private void writeSegmentTable(FileWriter writer) throws IOException{

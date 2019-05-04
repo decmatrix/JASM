@@ -1,6 +1,6 @@
 package com.sokolovskyi.jasm.compiler.parser;
 
-import com.sokolovskyi.jasm.compiler.Lexis.LexemesTable;
+import com.sokolovskyi.jasm.compiler.lexis.LexemesTable;
 import com.sokolovskyi.jasm.compiler.syntax.SentenceTable;
 
 import java.util.ArrayList;

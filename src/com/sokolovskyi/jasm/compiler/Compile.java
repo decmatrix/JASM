@@ -1,6 +1,7 @@
 package com.sokolovskyi.jasm.compiler;
 
-import com.sokolovskyi.jasm.compiler.Lexis.LexemesTable;
+import com.sokolovskyi.jasm.compiler.lexis.LexemesTable;
+import com.sokolovskyi.jasm.compiler.lexis.LexicalExcHandler;
 import com.sokolovskyi.jasm.compiler.listing.Listing;
 import com.sokolovskyi.jasm.compiler.parser.ParserLexemesTables;
 import com.sokolovskyi.jasm.compiler.parser.TextParser;
@@ -76,8 +77,13 @@ public class Compile implements Runnable{
     }
 
     private void initErrorsList(){
+        errors = new String[tablesOfLexemes.size()];
 
+        for(int i = 0; i < errors.length; i++){
+            errors[i] = null;
+        }
     }
+
 
     @Override
     public void run() {
@@ -101,8 +107,11 @@ public class Compile implements Runnable{
         //TODO create table of vars in asm
 
 
-        //TODO parse lexical errors
+        //init list errors
+        initErrorsList();
 
+        //parse lexical errors
+        LexicalExcHandler.catchLexicalExceptions(errors, tablesOfLexemes);
 
         //TODO parse syntactic errors
 
