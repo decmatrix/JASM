@@ -45,36 +45,38 @@ public class Listing {
     //TODO rebuild logic of listing formation
     private void writeMachineCommands(FileWriter writer) throws IOException{
         int adress = 0x0;
-        String buff;
         LexemesTable[] buffTable;
         String opcode;
 
         for(int i = 0; i < sourceCodeArr.length; i++){
 
             //str of source code contains empty string
-            if(sourceCodeArr[i].equals("")){
+            if(sourceCodeArr[i].trim().equals("")){
                 writer.write("     " + sourceCodeArr[i] + '\n');
                 continue;
             }
 
-            //END
-            if(tablesOfLexemes.get(i).length > 0 && tablesOfLexemes.get(i)[0].getLexeme().toUpperCase().equals(Lexemes.DIRECTIVES[2])){
+            //TODO END
+            if(tablesOfLexemes.get(i)[0].getLexeme().toUpperCase().equals(Lexemes.DIRECTIVES[2])){
                 writer.write("     " + sourceCodeArr[i] + '\n');
                 continue;
             }
 
             //start machine commands
-            buff = sourceCodeArr[i].toUpperCase();
             buffTable = tablesOfLexemes.get(i);
 
             //SEGMENT , ENDS
-            if(buff.contains(Lexemes.DIRECTIVES[0]) || buff.contains(Lexemes.DIRECTIVES[1])){
-                adress = 0x0;
-                writer.write(Adress.getStrAdress(adress) + "   " + sourceCodeArr[i] + '\n');
-                continue;
+            if(buffTable.length > 1) {
+                System.out.println(sourceCodeArr[i]);
+                if (buffTable[1].getLexeme().toUpperCase().equals(Lexemes.DIRECTIVES[0]) ||
+                        buffTable[1].getLexeme().toUpperCase().equals(Lexemes.DIRECTIVES[1])) {
+                    writer.write(Adress.getStrAdress(adress) + "   " + sourceCodeArr[i] + '\n');
+                    adress = 0x0;
+                    continue;
+                }
             }
 
-            //data types, dec, inc
+            //data types
             if(buffTable.length > 2) {
                 //data types
                 if (buffTable[0].getLinkLexeme().equals(Lexemes.IDENTIFIER) &&
@@ -83,49 +85,48 @@ public class Listing {
                     writer.write(Adress.getStrAdress(adress) + " " + opcode.toUpperCase() + " " + sourceCodeArr[i] + '\n');
                     adress = Adress.calcAdressDATATYPE(buffTable, adress);
                 }
+            }
 
-                //dec
-                if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[2])){
-                    opcode = Opcode.calcOpcodeDEC(buffTable);
-                    writer.write(Adress.getStrAdress(adress) + " " + opcode.toUpperCase() + " " + sourceCodeArr[i] + '\n');
-                    adress += 0x4;
-                    continue;
-                }
+            //inc
+            if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[1])){
+                opcode = Opcode.calcOpcodeINC(buffTable);
+                writer.write(Adress.getStrAdress(adress) + " " + opcode.toUpperCase() + " " + sourceCodeArr[i] + '\n');
+                adress = Adress.calcAdressINC(buffTable, adress);
+                System.out.println(adress);
+                continue;
+            }
 
-                //add
-                if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[3])){
-                    opcode = Opcode.calcOpcodeADD(buffTable);
-                    writer.write(Adress.getStrAdress(adress) + " " + opcode.toUpperCase() + " " + sourceCodeArr[i] + '\n');
-                    adress = Adress.calcAdressADD(buffTable, adress);
-                    continue;
-                }
+            //dec
+            if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[2])){
+                opcode = Opcode.calcOpcodeDEC(buffTable);
+                writer.write(Adress.getStrAdress(adress) + " " + opcode.toUpperCase() + " " + sourceCodeArr[i] + '\n');
+                adress += 0x4;
+                continue;
+            }
+
+            //add
+            if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[3])){
+                opcode = Opcode.calcOpcodeADD(buffTable);
+                writer.write(Adress.getStrAdress(adress) + " " + opcode.toUpperCase() + " " + sourceCodeArr[i] + '\n');
+                adress = Adress.calcAdressADD(buffTable, adress);
+                continue;
             }
 
             //cli
-            if(buff.contains(Lexemes.ASM_COMMANDS[0])){
+            if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[0])){
                 opcode = "FA";
                 writer.write(Adress.getStrAdress(adress) + " " + opcode + " " + sourceCodeArr[i] + '\n');
                 adress += 0x1;
                 continue;
             }
 
-            //inc
-            if(buffTable.length > 0){
-                //inc
-                if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[1])){
-                    opcode = Opcode.calcOpcodeINC(buffTable);
-                    writer.write(Adress.getStrAdress(adress) + " " + opcode.toUpperCase() + " " + sourceCodeArr[i] + '\n');
-                    adress = Adress.calcAdressINC(buffTable, adress);
-                    continue;
-                }
+            //or
+            if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[4])){
+                opcode = Opcode.calcOpcodeOR(buffTable);
+                writer.write(Adress.getStrAdress(adress) + " " + opcode + " " + sourceCodeArr[i] + '\n');
+                adress += 0x4;
+                continue;
             }
-
-            /*
-
-            //TODO or fix size
-            adress = calcAdressOR(buffTable, adress);
-            */
-
         }
     }
 
@@ -135,27 +136,5 @@ public class Listing {
 
     private void writeIdTable(FileWriter writer)throws IOException{
 
-    }
-
-    private int calcAdressMOV(LexemesTable[] buffTable, int adress){
-        if(buffTable.length > 0){
-            if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[6])){
-                if(buffTable[1].getLinkLexeme().equals(Lexemes.REGISTER_8)){
-                    return adress + 0x1;
-                }
-            }
-        }
-
-        return adress;
-    }
-
-    private int calcAdressOR(LexemesTable[] buffTable, int adress){
-        if(buffTable.length > 0){
-            if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[4])){
-                return adress + 0x4;
-            }
-        }
-
-        return adress;
     }
 }

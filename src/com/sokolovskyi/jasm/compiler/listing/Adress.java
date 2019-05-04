@@ -56,7 +56,6 @@ final class Adress {
     static int calcAdressADD(LexemesTable[] buffTable, int adress){
         if(buffTable.length > 0){
             if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[3])){
-                System.out.println(Integer.toHexString(adress + 0x2));
                 return adress + 0x2;
             }
         }

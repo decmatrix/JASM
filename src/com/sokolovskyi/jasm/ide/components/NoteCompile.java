@@ -24,10 +24,11 @@ public class NoteCompile extends JFrame{
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        //TODO rebuild
         //init
-        initWindow();
-        initTextArea();
-        initPanel();
+        //initWindow();
+        //initTextArea();
+        //initPanel();
 
         //compile
         compile();
