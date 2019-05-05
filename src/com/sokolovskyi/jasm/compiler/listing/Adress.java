@@ -38,6 +38,28 @@ final class Adress {
         return adress;
     }
 
+    static int calcAdressDEC(LexemesTable[] buffTable, int adress){
+        if(buffTable[3].getLinkLexeme().equals(Lexemes.REGISTER_S) && !buffTable[3].getLexeme().toUpperCase().equals(Lexemes.REGISTERS_S[2])){
+            adress += 0x5;
+        }
+        else{
+            adress += 0x4;
+        }
+
+        return adress;
+    }
+
+    static int calcAdressOR(LexemesTable[] buffTable, int adress){
+        if(buffTable[3].getLinkLexeme().equals(Lexemes.REGISTER_S)){
+            adress += 0x5;
+        }
+        else{
+            adress += 0x4;
+        }
+
+        return adress;
+    }
+
     static int calcAdressINC(LexemesTable[] buffTable, int adress){
         if(buffTable.length > 0){
             if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[1])){
@@ -63,8 +85,13 @@ final class Adress {
         return adress;
     }
 
-    static int calcAdressMOV(String opcode, int adress){
-
+    static int calcAdressMOV(LexemesTable[] buffTable, int adress){
+        if(buffTable[1].getLinkLexeme().equals(Lexemes.REGISTER_8)){
+            adress += 0x2;
+        }
+        else if(buffTable[1].getLinkLexeme().equals(Lexemes.REGISTER_32)){
+            adress += 0x5;
+        }
 
         return adress;
     }

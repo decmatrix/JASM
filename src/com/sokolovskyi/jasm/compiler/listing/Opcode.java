@@ -11,6 +11,7 @@ final class Opcode {
 
     private static Map<String, String> regs32;
     private static Map<String, String> regs8;
+    private static Map<String, String> regsSeg;
 
     private static Map<String, String> regs8mrm;
     private static Map<String, String> regs32mrm;
@@ -19,6 +20,7 @@ final class Opcode {
     static{
         regs32 = new HashMap<>();
         regs8 = new HashMap<>();
+        regsSeg = new HashMap<>();
 
         regs8mrm = new HashMap<>();
         regs32mrm = new HashMap<>();
@@ -40,6 +42,13 @@ final class Opcode {
         regs8.put(Lexemes.REGISTERS_8[5], "101");
         regs8.put(Lexemes.REGISTERS_8[6], "010");
         regs8.put(Lexemes.REGISTERS_8[7], "110");
+
+        regsSeg.put(Lexemes.REGISTERS_S[0], "2E:");
+        regsSeg.put(Lexemes.REGISTERS_S[1], "64:");
+        regsSeg.put(Lexemes.REGISTERS_S[2], "3E:");
+        regsSeg.put(Lexemes.REGISTERS_S[3], "26:");
+        regsSeg.put(Lexemes.REGISTERS_S[4], "65:");
+        regsSeg.put(Lexemes.REGISTERS_S[5], "36:");
 
         //TODO do better gen mod + reg + r/m
         regs8mrm.put(Lexemes.REGISTERS_8[0], "44");
@@ -147,14 +156,21 @@ final class Opcode {
         return opcode;
     }
 
-    //TODO provide SEG: important !!!!
     static String calcOpcodeDEC(LexemesTable[] buffTable){
         String opcode = "FE 4C";
 
-        if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[2])){
-            opcode = Opcode.calcEfAdressOpcode(opcode, buffTable, 3);
+        if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[2])) {
+            if(buffTable[3].getLexeme().toUpperCase().equals(Lexemes.REGISTERS_S[2])){
+                opcode = Opcode.calcEfAdressOpcode(opcode, buffTable, 5);
+            }
+            if (buffTable[3].getLinkLexeme().equals(Lexemes.REGISTER_S)) {
+                opcode = regsSeg.get(buffTable[3].getLexeme().toUpperCase()) + " ";
+                opcode += "FE 4C";
+                opcode = Opcode.calcEfAdressOpcode(opcode, buffTable, 5);
+            } else {
+                opcode = Opcode.calcEfAdressOpcode(opcode, buffTable, 3);
+            }
         }
-
         return opcode;
     }
 
@@ -176,30 +192,35 @@ final class Opcode {
                 return opcode;
             }
 
-
         }
 
         return opcode;
     }
 
-    //TODO provide SEG: important !!!!
+
     static String calcOpcodeOR(LexemesTable[] buffTable) {
         String opcode = "";
 
         if (buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[4])) {
+
+            if (buffTable[3].getLinkLexeme().equals(Lexemes.REGISTER_S)) {
+                opcode = regsSeg.get(buffTable[3].getLexeme().toUpperCase()) + " ";
+            }
+
             if (buffTable[1].getLinkLexeme().equals(Lexemes.REGISTER_32)) {
-                opcode = "0B ";
+                opcode += "0B ";
                 opcode += regs32mrm.get(buffTable[1].getLexeme().toUpperCase());
             } else if (buffTable[1].getLinkLexeme().equals(Lexemes.REGISTER_8)) {
-                opcode = "0A ";
+                opcode += "0A ";
                 opcode += regs8mrm.get(buffTable[1].getLexeme().toUpperCase());
             }
 
-            opcode = calcEfAdressOpcode(opcode, buffTable, 3);
+            if(buffTable[3].getLinkLexeme().equals(Lexemes.REGISTER_S)){
+                opcode = calcEfAdressOpcode(opcode, buffTable, 5);
+            }else {
+                opcode = calcEfAdressOpcode(opcode, buffTable, 3);
+            }
         }
-
-
-
 
         return opcode;
     }
@@ -235,11 +256,88 @@ final class Opcode {
 
     static String calcOpcodeMOV(LexemesTable[] buffTable){
         String opcode = "";
+        if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[6])){
+
+            //TODO not support
+            /*if(buffTable[3].getLinkLexeme().equals(Lexemes.IDENTIFIER)){
+                if(buffTable[1].getLexeme().toUpperCase().equals(Lexemes.REGISTERS_8[0])){
+                    opcode = "A0 ";
+                }
+                else if(buffTable[1].getLexeme().toUpperCase().equals(Lexemes.REGISTERS_32[0])){
+                    opcode = "A1 ";
+                }else if(buffTable[1].getLinkLexeme().equals(Lexemes.REGISTERS_8)){
+                    opcode = "8A ";
+                }else if(buffTable[1].getLinkLexeme().equals(Lexemes.REGISTERS_32)){
+                    opcode = "8B ";
+                }
+            }else*/ {
+                if (buffTable[1].getLinkLexeme().equals(Lexemes.REGISTER_8)) {
+                    opcode = Integer.toHexString(Integer.parseInt("10110" + regs8.get(buffTable[1].getLexeme().toUpperCase()), 2)) + " ";
+
+                } else if (buffTable[1].getLinkLexeme().equals(Lexemes.REGISTER_32)) {
+                    opcode = Integer.toHexString(Integer.parseInt("10111" + regs32.get(buffTable[1].getLexeme().toUpperCase()), 2)) + " ";
+                }
+            }
+
+            String buff = "";
+
+            if(buffTable[3].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)){
+                buff = Integer.toHexString(Integer.parseInt(buffTable[3].getLexeme()));
+            }else if(buffTable[3].getLinkLexeme().equals(Lexemes.BIN_CONSTANT)){
+                buff = Integer.toHexString(Integer.parseInt(buffTable[3].getLexeme().toUpperCase().replaceAll("B", ""), 2));
+            }
+            else if(buffTable[3].getLinkLexeme().equals(Lexemes.HEX_CONSTANT)){
+                buff = buffTable[3].getLexeme().toUpperCase().replaceAll("H", "");
+            }
+            else if(buffTable[3].getLexeme().equals(Lexemes.LITERALS[2]) && buffTable[4].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)){
+                buff = Integer.toHexString(-1 * Integer.parseInt(buffTable[4].getLexeme()));
+            }
+            else if(buffTable[3].getLexeme().equals(Lexemes.LITERALS[1]) && buffTable[4].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)){
+                buff = Integer.toHexString(Integer.parseInt(buffTable[4].getLexeme().toUpperCase().replace("+", "")));
+            }
+            else if(buffTable.length > 4){
+                //TODO calculate expression
+            }
+
+            StringBuilder buffer = new StringBuilder("");
+
+            if(buffTable[1].getLinkLexeme().equals(Lexemes.REGISTER_8)){
+                int del = 2 - buff.length();
+
+                return buildImmCom(opcode, buff, buffer, del);
+            }
+            else if(buffTable[1].getLinkLexeme().equals(Lexemes.REGISTER_32)){
+                int del = 8 - buff.length();
+
+                return buildImmCom(opcode, buff, buffer, del);
+            }
+        }
 
         return opcode;
     }
 
+    static String calcOpcodeCMP(LexemesTable[] buffTable){
+        String opcode = "";
+
+
+        return opcode;
+    }
+
+    private static String buildImmCom(String opcode, String buff, StringBuilder buffer, int del) {
+        if(del < 0){
+            return opcode + buff.substring(Math.abs(del), buff.length());
+        }else {
+
+            for (int i = 1; i <= del; i++) {
+                buffer.append("0");
+            }
+
+            return opcode + buffer.toString() + buff;
+        }
+    }
+
     private static String calcEfAdressOpcode(String opcode, LexemesTable[] buffTable, int pos){
+        System.out.println(buffTable[pos + 3] + "\n" + buffTable[pos + 1] + " " + pos);
         String buff  = Integer.toHexString(Integer.parseInt("00" + regs32.get(buffTable[pos + 3].getLexeme().toUpperCase()) +
                 regs32.get(buffTable[pos + 1].getLexeme().toUpperCase()), 2));
 
