@@ -163,7 +163,7 @@ final class Opcode {
             if(buffTable[3].getLexeme().toUpperCase().equals(Lexemes.REGISTERS_S[2])){
                 opcode = Opcode.calcEfAdressOpcode(opcode, buffTable, 5);
             }
-            if (buffTable[3].getLinkLexeme().equals(Lexemes.REGISTER_S)) {
+            else if (buffTable[3].getLinkLexeme().equals(Lexemes.REGISTER_S)) {
                 opcode = regsSeg.get(buffTable[3].getLexeme().toUpperCase()) + " ";
                 opcode += "FE 4C";
                 opcode = Opcode.calcEfAdressOpcode(opcode, buffTable, 5);
@@ -203,7 +203,7 @@ final class Opcode {
 
         if (buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[4])) {
 
-            if (buffTable[3].getLinkLexeme().equals(Lexemes.REGISTER_S)) {
+            if (buffTable[3].getLinkLexeme().equals(Lexemes.REGISTER_S) && !buffTable[3].getLexeme().toUpperCase().equals(Lexemes.REGISTERS_S[2])) {
                 opcode = regsSeg.get(buffTable[3].getLexeme().toUpperCase()) + " ";
             }
 
@@ -239,16 +239,24 @@ final class Opcode {
 
             pos++;
 
+            if(buffTable[1].getLinkLexeme().equals(Lexemes.REGISTER_S) && !buffTable[1].getLexeme().toUpperCase().equals(Lexemes.REGISTERS_S[2])){
+                opcode = regsSeg.get(buffTable[1].getLexeme().toUpperCase()) + " ";
+            }
+
             if(buffTable[pos].getLinkLexeme().equals(Lexemes.REGISTER_8)){
-                opcode = "20 ";
+                opcode += "20 ";
                 opcode += regs8mrm.get(buffTable[pos].getLexeme().toUpperCase());
             }
             else if(buffTable[pos].getLinkLexeme().equals(Lexemes.REGISTER_32)){
-                opcode = "21 ";
+                opcode += "21 ";
                 opcode += regs32mrm.get(buffTable[pos].getLexeme().toUpperCase());
             }
 
-            opcode = calcEfAdressOpcode(opcode, buffTable, 1);
+            if(buffTable[1].getLinkLexeme().equals(Lexemes.REGISTER_S)) {
+                opcode = calcEfAdressOpcode(opcode, buffTable, 3);
+            }else{
+                opcode = calcEfAdressOpcode(opcode, buffTable, 1);
+            }
         }
 
         return opcode;
@@ -297,6 +305,10 @@ final class Opcode {
             }
             else if(buffTable.length > 4){
                 //TODO calculate expression
+
+
+
+
             }
 
             StringBuilder buffer = new StringBuilder("");
@@ -318,6 +330,77 @@ final class Opcode {
 
     static String calcOpcodeCMP(LexemesTable[] buffTable){
         String opcode = "";
+
+        if(buffTable[3].getLinkLexeme().equals(Lexemes.REGISTER_S) && !buffTable[3].getLexeme().toUpperCase().equals(Lexemes.REGISTERS_S[2])){
+            opcode = regsSeg.get(buffTable[3].getLexeme().toUpperCase()) + " ";
+        }
+
+        if(buffTable[1].getLexeme().toUpperCase().equals(Lexemes.DIRECTIVES[4])){
+            opcode += "66| ";
+        }
+
+        opcode += "7C";
+
+        if(buffTable[3].getLinkLexeme().equals(Lexemes.REGISTER_S)){
+            opcode = calcEfAdressOpcode(opcode, buffTable, 5);
+        }else{
+            opcode = calcEfAdressOpcode(opcode, buffTable, 3);
+        }
+
+        opcode += " ";
+
+
+        int pos = 0;
+        for(int i = 0; i < buffTable.length; i++){
+            if(buffTable[i].getLexeme().equals(Lexemes.LITERALS[0])){
+                pos = i;
+                break;
+            }
+        }
+
+        pos++;
+
+        String buff = "";
+        if(buffTable[pos].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)){
+            buff = Integer.toHexString(Integer.parseInt(buffTable[pos].getLexeme()));
+        }else if(buffTable[pos].getLinkLexeme().equals(Lexemes.BIN_CONSTANT)){
+            buff = Integer.toHexString(Integer.parseInt(buffTable[pos].getLexeme().toUpperCase().replaceAll("B", ""), 2));
+        }
+        else if(buffTable[pos].getLinkLexeme().equals(Lexemes.HEX_CONSTANT)){
+            buff = buffTable[pos].getLexeme().toUpperCase().replaceAll("H", "");
+        }
+        else if(buffTable[pos].getLexeme().equals(Lexemes.LITERALS[2]) && buffTable[4].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)){
+            buff = Integer.toHexString(-1 * Integer.parseInt(buffTable[pos + 1].getLexeme()));
+        }
+        else if(buffTable[pos].getLexeme().equals(Lexemes.LITERALS[1]) && buffTable[pos + 1].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)){
+            buff = Integer.toHexString(Integer.parseInt(buffTable[pos + 1].getLexeme().toUpperCase().replace("+", "")));
+        }
+        else if(buffTable.length > 4){
+            //TODO calculate expression
+        }
+
+        StringBuilder buffer = new StringBuilder("");
+        if(buffTable[1].getLexeme().toUpperCase().equals(Lexemes.DIRECTIVES[3])){
+            int del = 8 - buff.length();
+
+            if(del < 0){
+                opcode += buff.substring(Math.abs(del), buff.length());
+            }else{
+                opcode += buff;
+            }
+        } else if(buffTable[1].getLexeme().toUpperCase().equals(Lexemes.DIRECTIVES[4])){
+            int del = 4 - buff.length();
+
+            if(del < 0){
+                opcode += buff.substring(Math.abs(del), buff.length());
+            }else{
+                opcode += buff;
+            }
+        } else if(buffTable[1].getLexeme().toUpperCase().equals(Lexemes.DIRECTIVES[6])){
+            int del = 2 - buff.length();
+
+            opcode = buildImmCom(opcode, buff, buffer, del);
+        }
 
 
         return opcode;

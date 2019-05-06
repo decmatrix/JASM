@@ -9,7 +9,7 @@ package com.sokolovskyi.jasm.compiler.lexis;
     //mnemonic constants
     public final static String REGISTER_8 = "Reg 8";
     public final static String REGISTER_32 = "Reg 32";
-    public final static  String REGISTER_S = "Reg stack";
+    public final static  String REGISTER_S = "Reg segment";
     public final static String DIRECTIVE = "Directive";
     public final static String DATATYPE = "Data type";
     public final static String ASMCOMMAND = "Machine command";

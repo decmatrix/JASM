@@ -140,7 +140,7 @@ public class Listing {
             if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[5])){
                 opcode = Opcode.calcOpcodeAND(buffTable);
                 writer.write(Adress.getStrAdress(adress) + " " + opcode + " " + sourceCodeArr[i] + '\n');
-                adress += 0x4;
+                adress = Adress.calcAdressAND(buffTable, adress);
                 continue;
             }
 
@@ -154,7 +154,9 @@ public class Listing {
 
             //cmp
             if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[7])){
-
+                opcode = Opcode.calcOpcodeCMP(buffTable);
+                writer.write(Adress.getStrAdress(adress) + " " + opcode.toUpperCase() + " " + sourceCodeArr[i] + '\n');
+                adress = Adress.calcAdressCMP(buffTable, adress);
                 continue;
             }
         }

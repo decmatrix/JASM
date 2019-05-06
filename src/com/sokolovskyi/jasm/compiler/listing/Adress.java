@@ -3,6 +3,7 @@ package com.sokolovskyi.jasm.compiler.listing;
 import com.sokolovskyi.jasm.compiler.lexis.Lexemes;
 import com.sokolovskyi.jasm.compiler.lexis.LexemesTable;
 
+//TODO calc adress by opcode ? See in future
 final class Adress {
 
     private Adress(){}
@@ -50,7 +51,7 @@ final class Adress {
     }
 
     static int calcAdressOR(LexemesTable[] buffTable, int adress){
-        if(buffTable[3].getLinkLexeme().equals(Lexemes.REGISTER_S)){
+        if(buffTable[3].getLinkLexeme().equals(Lexemes.REGISTER_S) && !buffTable[3].getLexeme().toUpperCase().equals(Lexemes.REGISTERS_S[2])){
             adress += 0x5;
         }
         else{
@@ -58,6 +59,17 @@ final class Adress {
         }
 
         return adress;
+    }
+
+    static int calcAdressAND(LexemesTable[] buffTable, int adress){
+        if(buffTable[1].getLinkLexeme().equals(Lexemes.REGISTER_S) && !buffTable[1].getLexeme().toUpperCase().equals(Lexemes.REGISTERS_S[2])){
+            adress += 0x5;
+        }
+        else{
+            adress += 0x4;
+        }
+
+        return  adress;
     }
 
     static int calcAdressINC(LexemesTable[] buffTable, int adress){
@@ -76,10 +88,8 @@ final class Adress {
     }
 
     static int calcAdressADD(LexemesTable[] buffTable, int adress){
-        if(buffTable.length > 0){
-            if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[3])){
-                return adress + 0x2;
-            }
+        if(buffTable[0].getLexeme().toUpperCase().equals(Lexemes.ASM_COMMANDS[3])){
+            return adress + 0x2;
         }
 
         return adress;
@@ -92,6 +102,11 @@ final class Adress {
         else if(buffTable[1].getLinkLexeme().equals(Lexemes.REGISTER_32)){
             adress += 0x5;
         }
+
+        return adress;
+    }
+
+    static int calcAdressCMP(LexemesTable[] buffTable, int adress){
 
         return adress;
     }
