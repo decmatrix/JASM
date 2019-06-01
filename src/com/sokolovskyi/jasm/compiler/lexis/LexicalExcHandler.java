@@ -10,7 +10,7 @@ public final class LexicalExcHandler {
         for(int i = 0; i < tablesOfLexemes.size() - 1; i++){
             for(int j = 0; j < tablesOfLexemes.get(i).length; j++){
                 if(tablesOfLexemes.get(i)[j].getLinkLexeme().equals(Lexemes.UNKNOWN_LEXEME)){
-                    errors[i] = "\n(" + (i + 1) + ") error: Expected: instruction or directive";
+                    errors[i] = "\n(" + (i + 1) + ") error: " + LexicalErrors.Ox0;
                 }
             }
         }

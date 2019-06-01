@@ -26,9 +26,9 @@ public class NoteCompile extends JFrame{
 
         //TODO rebuild
         //init
-        //initWindow();
-        //initTextArea();
-        //initPanel();
+        initWindow();
+        initTextArea();
+        initPanel();
 
         //compile
         compile();
@@ -37,9 +37,18 @@ public class NoteCompile extends JFrame{
     }
 
     private void compile(){
-        new Thread(new Compile(programText, TMP_COMPILE_FILE)).start();
+        Thread compiling = new Thread(new Compile(programText, TMP_COMPILE_FILE));
+        compiling.start();
 
-       /* try(FileReader reader = new FileReader(TMP_COMPILE_FILE)){
+        //FIXME threads in compiler
+        try {
+            compiling.join();
+        }catch (InterruptedException e){
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+       try(FileReader reader = new FileReader(TMP_COMPILE_FILE)){
             BufferedReader br = new BufferedReader(reader);
 
             String line = br.readLine();
@@ -54,7 +63,7 @@ public class NoteCompile extends JFrame{
         }catch (IOException e){
             e.printStackTrace();
             System.exit(1);
-        }*/
+        }
     }
 
     private void initTextArea(){

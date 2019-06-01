@@ -3,10 +3,12 @@ package com.sokolovskyi.jasm.compiler;
 import com.sokolovskyi.jasm.compiler.lexis.LexemesTable;
 import com.sokolovskyi.jasm.compiler.lexis.LexicalExcHandler;
 import com.sokolovskyi.jasm.compiler.listing.Listing;
-import com.sokolovskyi.jasm.compiler.parser.ParserLexemesTables;
+import com.sokolovskyi.jasm.compiler.parser.TableParser;
 import com.sokolovskyi.jasm.compiler.parser.TextParser;
-import com.sokolovskyi.jasm.compiler.parser.ParserSentencesTable;
 import com.sokolovskyi.jasm.compiler.syntax.SentenceTable;
+import com.sokolovskyi.jasm.compiler.syntax.SyntacticExcHandler;
+import com.sokolovskyi.jasm.compiler.syntax.SyntaxErrors;
+import com.sokolovskyi.jasm.compiler.syntax.SyntaxTable;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ public class Compile implements Runnable{
     //for result
     private ArrayList<LexemesTable[]> tablesOfLexemes;
     private SentenceTable[] tablesOfSentences;
+    private SyntaxTable[] syntaxTables;
 
 
     //array of errors
@@ -95,14 +98,16 @@ public class Compile implements Runnable{
         //create tables (Lexical analysis)
         tablesOfLexemes = new ArrayList<>();
         for (String[] strings : parseList) {
-            tablesOfLexemes.add(ParserLexemesTables.getTablesFromLine(strings));
+            tablesOfLexemes.add(TableParser.getLexemeTables(strings));
         }
 
         //create tables (Syntactic analysis)
-        tablesOfSentences = ParserSentencesTable.getTablesFromLexemsTable(tablesOfLexemes);
+        tablesOfSentences =  TableParser.getSentenceTables(tablesOfLexemes);
+
+        //create syntax table
+        syntaxTables = TableParser.getSyntaxTables(tablesOfLexemes, tablesOfSentences, text.split("\n"));
 
         //TODO see in doc of course work
-
 
         //TODO create table of vars in asm
 
@@ -113,8 +118,8 @@ public class Compile implements Runnable{
         //parse lexical errors
         LexicalExcHandler.catchLexicalExceptions(errors, tablesOfLexemes);
 
-        //TODO parse syntactic errors
-
+        //parse syntactics errors
+        SyntacticExcHandler.catchException(errors, syntaxTables);
 
         //create listing file
         Listing listing = new Listing(text, tablesOfLexemes, errors);

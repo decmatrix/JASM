@@ -25,10 +25,10 @@ package com.sokolovskyi.jasm.compiler.lexis;
 
     //registers 8 bits
     public final static String[] REGISTERS_8 = {"AL", "AH", "BL", "BH", "CL", "CH",
-    "DL", "DH", "BPL", "SIL", "DIL", "SPL", "IP"};
+    "DL", "DH"/*, "BPL", "SIL", "DIL", "SPL", "IP"*/};
     //registers 32 bits
     public final static String[] REGISTERS_32 = {"EAX", "EBX", "ECX", "EDX", "EBP",
-    "ESI", "EDI", "ESP", "EIP"};
+    "ESI", "EDI", "ESP"/*, "EIP"*/};
     //registers of stack
     public final static String[] REGISTERS_S = {"CS", "FS", "DS", "ES", "GS", "SS"};
     //directives

@@ -112,7 +112,7 @@ class NoteFrame extends JFrame {
         fileMenu.add(menuSave);
 
         fileMenu.addSeparator();
-        menuExit = new JMenuItem("exit ⭙");
+        menuExit = new JMenuItem("exit ⇱");
         menuExit.setFont(font);
         fileMenu.add(menuExit);
 
@@ -132,7 +132,7 @@ class NoteFrame extends JFrame {
         JMenu toolsMenu = new JMenu("Tools");
         toolsMenu.setFont(font);
 
-        menuCompile = new JMenuItem("run \u2BC8\t");
+        menuCompile = new JMenuItem("run ▶\t");
         menuCompile.setFont(font);
         toolsMenu.add(menuCompile);
 
@@ -235,7 +235,7 @@ class NoteFrame extends JFrame {
                 errorEmptyText.setVisible(true);
             }
             else{
-                new NoteCompile(font, theText.getText());
+               new NoteCompile(font, theText.getText());
             }
         });
 
