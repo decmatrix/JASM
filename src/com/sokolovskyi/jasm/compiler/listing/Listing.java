@@ -82,6 +82,10 @@ public class Listing {
                 continue;
             }
 
+            if(sourceCodeArr[i].trim().charAt(0) == ';'){
+                continue;
+            }
+
             //start machine commands
             buffTable = tablesOfLexemes.get(i);
 
@@ -230,6 +234,11 @@ public class Listing {
                 continue;
             }
 
+            if(sourceCodeArr[i].trim().charAt(0) == ';'){
+                writer.write("    " + sourceCodeArr[i] + '\n');
+                continue;
+            }
+
             if(tablesOfLexemes.get(i)[0].getLexeme().toUpperCase().equals(Lexemes.DIRECTIVES[2])){
                 writer.write("     " + sourceCodeArr[i] + '\n');
                 continue;
@@ -341,6 +350,8 @@ public class Listing {
     }
 
     private void writeSegmentTable(FileWriter writer) throws IOException{
+        if(segmentAdresses.isEmpty()) return;
+
         writer.write("\n\n\n\n\t\t\t\tN a m e\t\t\t\t  Size    Length\n\n");
 
         for(Map.Entry<String, Integer[]> entry : segmentAdresses.entrySet()){
@@ -351,22 +362,25 @@ public class Listing {
     }
 
     private void writeIdTable(FileWriter writer)throws IOException{
-        writer.write("\n\n\n\n\t\t\t\tN a m e\t\t\t\t  Value    Attr\n\n");
+        if(labelAdress.isEmpty()) return;
+        if(segmentAdresses.isEmpty()) return;
+
+        writer.write("\n\n\n\n\t\t\t\tN a m e\t\t\t\tType     Value   Attr\n\n");
 
         int maxSize = maxSizeId();
 
         for(Map.Entry<String, Integer[]> entry : labelAdress.entrySet()){
-            writer.write(getFullIdStr(entry, maxSize));
+            writer.write(getFullIdStr(entry, maxSize, false));
         }
 
         writer.write("\n\n");
 
         for(Map.Entry<String, Integer[]> entry : varsAdresses.entrySet()){
-            writer.write(getFullIdStr(entry, maxSize));
+            writer.write(getFullIdStr(entry, maxSize, true));
         }
     }
 
-    private String getFullIdStr(Map.Entry<String, Integer[]> entry, int maxSize){
+    private String getFullIdStr(Map.Entry<String, Integer[]> entry, int maxSize, boolean flag){
         String res;
 
         String labStr = getIdStr(entry.getKey(), maxSize);
@@ -380,7 +394,23 @@ public class Listing {
             attr = "CODE";
         }
 
-        return labStr + "  " + Adress.getStrAdress(entry.getValue()[0]) + "    " + attr + '\n';
+        if(flag){
+            String type = "";
+
+            LexemesTable[] tab = tablesOfLexemes.get(entry.getValue()[1]);
+
+            if(tab[1].getLexeme().toUpperCase().equals(Lexemes.DATA_TYPES[0])){
+                type = "BYTE   ";
+            }else if(tab[1].getLexeme().toUpperCase().equals(Lexemes.DATA_TYPES[1])) {
+                type = "WORD   ";
+            }else  if(tab[1].getLexeme().toUpperCase().equals(Lexemes.DATA_TYPES[2])){
+                type = "DWORD  ";
+            }
+
+            return labStr + "  " + "L " + type + Adress.getStrAdress(entry.getValue()[0]) + "    " + attr + '\n';
+        }
+
+        return labStr + "  " + "L NEAR" + "   " + Adress.getStrAdress(entry.getValue()[0]) + "    " + attr + '\n';
     }
 
     private String getIdStr(String segment , int max){

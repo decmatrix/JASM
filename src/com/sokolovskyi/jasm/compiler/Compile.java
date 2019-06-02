@@ -13,7 +13,7 @@ import com.sokolovskyi.jasm.compiler.syntax.SyntaxTable;
 import java.io.*;
 import java.util.ArrayList;
 
-public class Compile implements Runnable{
+public class Compile /*implements Runnable*/{
     private String text;
     private String pathFile;
 
@@ -88,8 +88,7 @@ public class Compile implements Runnable{
     }
 
 
-    @Override
-    public void run() {
+    public void compile() {
         //get parsed text
         TextParser parser = new TextParser(text);
         ArrayList<String[]> parseList;

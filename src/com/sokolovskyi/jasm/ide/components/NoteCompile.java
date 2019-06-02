@@ -37,16 +37,19 @@ public class NoteCompile extends JFrame{
     }
 
     private void compile(){
-        Thread compiling = new Thread(new Compile(programText, TMP_COMPILE_FILE));
-        compiling.start();
+//        Thread compiling = new Thread(new Compile(programText, TMP_COMPILE_FILE));
+//        compiling.start();
 
-        //FIXME threads in compiler
-        try {
-            compiling.join();
-        }catch (InterruptedException e){
-            e.printStackTrace();
-            System.exit(1);
-        }
+        Compile compiler = new Compile(programText, TMP_COMPILE_FILE);
+        compiler.compile();
+
+//        //FIXME threads in compiler
+//        try {
+//            compiling.join();
+//        }catch (InterruptedException e){
+//            e.printStackTrace();
+//            System.exit(1);
+//        }
 
        try(FileReader reader = new FileReader(TMP_COMPILE_FILE)){
             BufferedReader br = new BufferedReader(reader);
