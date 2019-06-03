@@ -347,6 +347,10 @@ public class Listing {
                 writer.write(Adress.getStrAdress(adresses[i]) + " " + opcode.toUpperCase() + " " + sourceCodeArr[i] + '\n');
             }
         }
+
+        if(errors[sourceCodeArr.length] != null){
+            writer.write(errors[sourceCodeArr.length] + '\n');
+        }
     }
 
     private void writeSegmentTable(FileWriter writer) throws IOException{
@@ -387,11 +391,14 @@ public class Listing {
 
         String attr = "UNKNOWN";
 
-
-        if(entry.getValue()[1] <= segmentAdresses.get("DATA")[1]){
-            attr = "DATA";
-        }else if(entry.getValue()[1] <= segmentAdresses.get("CODE")[1]){
-            attr = "CODE";
+        try {
+            if (entry.getValue()[1] <= segmentAdresses.get("DATA")[1]) {
+                attr = "DATA";
+            } else if (entry.getValue()[1] <= segmentAdresses.get("CODE")[1]) {
+                attr = "CODE";
+            }
+        }catch (NullPointerException e){
+            return "";
         }
 
         if(flag){

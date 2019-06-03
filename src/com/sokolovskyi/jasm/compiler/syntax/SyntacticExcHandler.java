@@ -1,8 +1,8 @@
 package com.sokolovskyi.jasm.compiler.syntax;
 
+import com.sokolovskyi.jasm.compiler.additionals.CalcMathExpr;
 import com.sokolovskyi.jasm.compiler.lexis.Lexemes;
 import com.sokolovskyi.jasm.compiler.lexis.LexemesTable;
-import com.sokolovskyi.jasm.compiler.listing.Listing;
 
 public class SyntacticExcHandler {
     private static String[] ids;
@@ -28,9 +28,6 @@ public class SyntacticExcHandler {
     public static void catchException(String[] errors, SyntaxTable[] table){
         LexemesTable[] lexLine;
         SentenceTable sentenceLine;
-
-        int countDataSeg = 0;
-        int countCodeSeg = 0;
 
         getAllIds(table);
 
@@ -93,6 +90,9 @@ public class SyntacticExcHandler {
                 }
 
             }else{
+
+
+
                 errors[i] = "\n(" + (i + 1) + ") error: " + SyntaxErrors.Ox1;
             }
         }
@@ -112,11 +112,11 @@ public class SyntacticExcHandler {
             }
         }
 
-        if(lexLine[p].getLexeme().equals("CODE") || lexLine[p].getLexeme().equals("DATA")){
+        if(lexLine[p].getLexeme().toUpperCase().equals("CODE") || lexLine[p].getLexeme().toUpperCase().equals("DATA")){
 
             p++;
 
-            if(lexLine[p].getLexeme().toUpperCase().equals(Lexemes.DIRECTIVES[0])){
+            if(lexLine[p].getLexeme().toUpperCase().equals(Lexemes.DIRECTIVES[0]) || lexLine[p].getLexeme().toUpperCase().equals(Lexemes.DIRECTIVES[1])){
 
                 if(p != lexLine.length - 1){
                     p++;
@@ -130,9 +130,9 @@ public class SyntacticExcHandler {
                     return  pattern + SyntaxErrors.OxF;
                 }
 
-//                if(isExistId(lexLine[0].getLexeme())){
-//                    return pattern + SyntaxErrors.Ox10 + lexLine[p - 1].getLexeme();
-//                }
+                if(isMultiDefId(lexLine[0].getLexeme())){
+                    return pattern + SyntaxErrors.Ox10 + lexLine[0].getLexeme();
+                }
 
                 return null;
             }
@@ -155,9 +155,9 @@ public class SyntacticExcHandler {
                     return pattern + SyntaxErrors.Ox1;
                 }
 
-//                if(isExistId(lexLine[0].getLexeme())){
-//                    return pattern + SyntaxErrors.Ox10 + lexLine[p - 1].getLexeme();
-//                }
+                if(isMultiDefId(lexLine[0].getLexeme())){
+                    return pattern + SyntaxErrors.Ox10 + lexLine[p - 1].getLexeme();
+                }
 
                 return null;
             }
@@ -167,15 +167,17 @@ public class SyntacticExcHandler {
                 if(p != lexLine.length - 1){
                     p++;
 
-                    if(lexLine.length - 1 - p > 2){
+                   if(lexLine.length - 1 - p > 2){
                         int pos_e = lexLine.length - 1;
 
-                        String res = checkEffAddres(lexLine, p, pos_e);
+                        String res = checkMathExp(lexLine, p, pos_e);
 
                         if(res == null){
-                            if(isExistId(lexLine[0].getLexeme())){
-                                return pattern + SyntaxErrors.Ox10 + lexLine[p - 1].getLexeme();
+                            if(isMultiDefId(lexLine[0].getLexeme())){
+                                return pattern + SyntaxErrors.Ox10 + lexLine[0].getLexeme();
                             }
+
+                            return null;
                         }
 
                         return pattern + res;
@@ -188,9 +190,9 @@ public class SyntacticExcHandler {
 
                             if(lexLine[p].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)){
 
-                                /*if(isExistId(lexLine[0].getLexeme())){
+                                if(isMultiDefId(lexLine[0].getLexeme())){
                                     return pattern + SyntaxErrors.Ox10 + lexLine[0].getLexeme();
-                                }*/
+                                }
 
                                 return null;
                             }
@@ -204,9 +206,9 @@ public class SyntacticExcHandler {
                     if(lexLine[p].getLinkLexeme().equals(Lexemes.DEC_CONSTANT) || lexLine[p].getLinkLexeme().equals(Lexemes.HEX_CONSTANT) ||
                             lexLine[p].getLinkLexeme().equals(Lexemes.BIN_CONSTANT)){
 
-//                        if(isExistId(lexLine[0].getLexeme())){
-//                            return pattern + SyntaxErrors.Ox10 + lexLine[p - 1].getLexeme();
-//                        }
+                        if(isMultiDefId(lexLine[0].getLexeme())){
+                            return pattern + SyntaxErrors.Ox10 + lexLine[0].getLexeme();
+                        }
 
                         return null;
                     }
@@ -235,7 +237,7 @@ public class SyntacticExcHandler {
 
 
             if(!isExistId(lexLine[0].getLexeme())){
-                return  pattern + SyntaxErrors.Ox2 + lexLine[p - 1].getLexeme();
+                return  pattern + SyntaxErrors.Ox2 + lexLine[0].getLexeme();
             }
 
         }
@@ -245,9 +247,28 @@ public class SyntacticExcHandler {
 
     private static String checkMathExp(LexemesTable[] lexLine, int pos_s, int pos_e){
 
+        //Integer res = CalcMathExpr.calcLinearExp(lexLine, pos_s);
 
+        StringBuilder exp = new StringBuilder();
+
+        for(int i = pos_s; i <= pos_e; i++){
+            exp.append(lexLine[i].getLexeme());
+        }
+
+        if(!eval(exp.toString())){
+            return SyntaxErrors.Ox13;
+        }
 
         return null;
+    }
+
+    private static boolean eval(String exp){
+
+        char[] buff = exp.toCharArray();
+
+
+
+        return true; //false
     }
 
 
@@ -300,16 +321,26 @@ public class SyntacticExcHandler {
         return false;
     }
 
+    private static boolean isMultiDefId(String id){
+        int counter = 0;
+
+        for(String i : ids){
+            if(i == null) continue;
+
+            if(i.equals(id)){
+                counter++;
+            }
+        }
+
+        return counter >= 2;
+    }
+
     private static String checkINC(LexemesTable[] lexLine, SentenceTable sentenceLine, int pos){
         String pattern = "\n(" + (pos + 1) + ") error: ";
 
         if(sentenceLine.getPosFirstOperand() == -1){
             return pattern + SyntaxErrors.Ox5;
         }else{
-            /*if(sentenceLine.getCountFirstOperand() > 1){
-                return pattern + SyntaxErrors.err;
-            }*/
-
             if(lexLine[sentenceLine.getPosFirstOperand()].getLinkLexeme().equals(Lexemes.IDENTIFIER) || lexLine[sentenceLine.getPosFirstOperand()].getLinkLexeme().equals(Lexemes.ASMCOMMAND)){
                 if(isExistId(lexLine[sentenceLine.getPosFirstOperand()].getLexeme())){
                     return pattern + SyntaxErrors.Ox8;
@@ -727,57 +758,110 @@ public class SyntacticExcHandler {
     private static String checkMOV(LexemesTable[] lexLine, SentenceTable sentenceLine, int pos){
         String pattern = "\n(" + (pos + 1) + ") error: ";
 
-        if(lexLine.length > 1 && lexLine[1].getLinkLexeme().equals(Lexemes.LITERAL)){
+        if(sentenceLine.getPosFirstOperand() == -1 || sentenceLine.getPosSecondOperand() == -1) {
             return pattern + SyntaxErrors.Ox5;
         }
 
-        if(sentenceLine.getPosFirstOperand() == -1 && sentenceLine.getPosSecondOperand() == -1) {
+        if(lexLine[1].getLinkLexeme().equals(Lexemes.LITERAL)){
             return pattern + SyntaxErrors.Ox5;
         }
 
-        if(lexLine.length == 2 && sentenceLine.getPosFirstOperand() != -1 && (lexLine[sentenceLine.getPosFirstOperand()].getLinkLexeme().equals(Lexemes.REGISTER_8) ||
-                lexLine[sentenceLine.getPosFirstOperand()].getLinkLexeme().equals(Lexemes.REGISTER_32))){
+        int p = sentenceLine.getPosFirstOperand();
+
+        if(lexLine[p].getLinkLexeme().equals(Lexemes.REGISTER_8) || lexLine[p].getLinkLexeme().equals(Lexemes.REGISTER_32)){
+            p++;
+
+            if(lexLine[p].getLexeme().equals(Lexemes.LITERALS[0])){
+                p++;
+
+                if(lexLine[p].getLexeme().equals(Lexemes.LITERALS[1]) || lexLine[p].getLexeme().equals(Lexemes.LITERALS[2])){
+                    p++;
+
+                    if(lexLine[p].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)){
+
+                        if(p != lexLine.length - 1){
+                            p++;
+
+                            if(lexLine[p].getLinkLexeme().equals(Lexemes.IDENTIFIER)){
+                                if(!isExistId(lexLine[p].getLexeme())){
+                                    return pattern + SyntaxErrors.Ox2 + lexLine[p].getLexeme();
+                                }
+                            }
+
+                            if(lexLine[p].getLinkLexeme().equals(Lexemes.LITERAL)){
+                                return pattern + SyntaxErrors.Ox4;
+                            }
+
+                            return pattern + SyntaxErrors.Ox3;
+                        }
+
+                        return null;
+                    }
+
+                    if(lexLine[p].getLinkLexeme().equals(Lexemes.LITERAL)){
+                        return pattern + SyntaxErrors.Ox4;
+                    }
+
+                    if(lexLine[p].getLinkLexeme().equals(Lexemes.IDENTIFIER)){
+                        if(!isExistId(lexLine[p].getLexeme())){
+                            return pattern + SyntaxErrors.Ox2 + lexLine[p].getLexeme();
+                        }
+                    }
+
+                    return pattern + SyntaxErrors.Ox3;
+                }
+
+                if(lexLine[p].getLinkLexeme().equals(Lexemes.DEC_CONSTANT) || lexLine[p].getLinkLexeme().equals(Lexemes.BIN_CONSTANT) ||
+                        lexLine[p].getLinkLexeme().equals(Lexemes.HEX_CONSTANT)){
+
+                    if(p != lexLine.length - 1){
+                        p++;
+
+                        if(lexLine[p].getLinkLexeme().equals(Lexemes.IDENTIFIER)){
+                            if(!isExistId(lexLine[p].getLexeme())){
+                                return pattern + SyntaxErrors.Ox2 + lexLine[p].getLexeme();
+                            }
+                        }
+
+                        if(lexLine[p].getLinkLexeme().equals(Lexemes.LITERAL)){
+                            return pattern + SyntaxErrors.Ox4;
+                        }
+
+                        return pattern + SyntaxErrors.Ox3;
+                    }
+
+                    return null;
+                }
+
+                if(lexLine[p].getLinkLexeme().equals(Lexemes.IDENTIFIER)){
+                    if(!isExistId(lexLine[p].getLexeme())){
+                        return pattern + SyntaxErrors.Ox2 + lexLine[p].getLexeme();
+                    }
+                }
+
+                if(lexLine[p].getLinkLexeme().equals(Lexemes.LITERAL)){
+                    return pattern + SyntaxErrors.Ox4;
+                }
+
+                return pattern + SyntaxErrors.Ox3;
+            }
+
             return pattern + SyntaxErrors.Ox7;
         }
 
-        if(sentenceLine.getPosFirstOperand() != -1){
-            if(lexLine[sentenceLine.getPosFirstOperand()].getLinkLexeme().equals(Lexemes.IDENTIFIER) || lexLine[sentenceLine.getPosFirstOperand()].getLinkLexeme().equals(Lexemes.ASMCOMMAND)){
-                return pattern + SyntaxErrors.Ox2 + lexLine[sentenceLine.getPosFirstOperand()].getLexeme();
-            }
-
-            if(lexLine[sentenceLine.getPosFirstOperand()].getLinkLexeme().equals(Lexemes.DEC_CONSTANT) || lexLine[sentenceLine.getPosFirstOperand()].getLinkLexeme().equals(Lexemes.HEX_CONSTANT) ||
-                    lexLine[sentenceLine.getPosFirstOperand()].getLinkLexeme().equals(Lexemes.BIN_CONSTANT)){
-                return pattern + SyntaxErrors.Ox6;
+        if(lexLine[p].getLinkLexeme().equals(Lexemes.IDENTIFIER)){
+            if(!isExistId(lexLine[p].getLexeme())){
+                return pattern + SyntaxErrors.Ox2 + lexLine[p].getLexeme();
             }
         }
 
-        if(lexLine.length > 2) {
-            if (lexLine[sentenceLine.getPosFirstOperand()].getLinkLexeme().equals(Lexemes.REGISTER_8) || lexLine[sentenceLine.getPosFirstOperand()].getLinkLexeme().equals(Lexemes.REGISTER_32)) {
-                if (lexLine[sentenceLine.getPosFirstOperand() + 1].getLinkLexeme().equals(Lexemes.IDENTIFIER) || lexLine[sentenceLine.getPosFirstOperand() + 1].getLinkLexeme().equals(Lexemes.ASMCOMMAND)) {
-                    return pattern + SyntaxErrors.Ox2 + lexLine[sentenceLine.getPosFirstOperand() + 1].getLexeme();
-                }
-            }
-
-            if(lexLine[sentenceLine.getPosFirstOperand() + 1].getLinkLexeme().equals(Lexemes.DEC_CONSTANT) || lexLine[sentenceLine.getPosFirstOperand() + 1].getLinkLexeme().equals(Lexemes.HEX_CONSTANT) ||
-                    lexLine[sentenceLine.getPosFirstOperand() + 1].getLinkLexeme().equals(Lexemes.BIN_CONSTANT)){
-                return pattern + SyntaxErrors.Ox3;
-            }
-        }
-
-        if(sentenceLine.getPosFirstOperand() != -1 && sentenceLine.getPosSecondOperand() != -1) {
-            if (lexLine[sentenceLine.getPosFirstOperand()].getLinkLexeme().equals(Lexemes.REGISTER_8) || lexLine[sentenceLine.getPosFirstOperand()].getLinkLexeme().equals(Lexemes.REGISTER_32)) {
-                if (lexLine[sentenceLine.getPosSecondOperand()].getLinkLexeme().equals(Lexemes.IDENTIFIER) || lexLine[sentenceLine.getPosFirstOperand() + 1].getLinkLexeme().equals(Lexemes.ASMCOMMAND)){
-                    return pattern + SyntaxErrors.Ox2 + lexLine[sentenceLine.getPosSecondOperand()].getLexeme();
-                }
-            }
-        }
-
-        if(sentenceLine.getPosFirstOperand() != -1 && sentenceLine.getPosSecondOperand() == -1){
-            return pattern + SyntaxErrors.Ox5;
+        if(lexLine[p].getLinkLexeme().equals(Lexemes.DEC_CONSTANT) || lexLine[p].getLinkLexeme().equals(Lexemes.BIN_CONSTANT) ||
+                lexLine[p].getLinkLexeme().equals(Lexemes.HEX_CONSTANT)){
+            return pattern + SyntaxErrors.Ox6;
         }
 
 
-        return null;
+        return pattern + SyntaxErrors.Ox3;
     }
 
     private static String checkCMP(LexemesTable[] lexLine, SentenceTable sentenceLine, int pos){

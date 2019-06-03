@@ -15,6 +15,7 @@ public class NoteCompile extends JFrame{
     private String programText;
     private JScrollPane spane;
 
+    private static String LST_COMPILE_FILE = "./src/listings/list.lst";
     private static String TMP_COMPILE_FILE = "./src/tmp/compile.tmp";
 
     public NoteCompile(Font font, String programText){
@@ -37,21 +38,11 @@ public class NoteCompile extends JFrame{
     }
 
     private void compile(){
-//        Thread compiling = new Thread(new Compile(programText, TMP_COMPILE_FILE));
-//        compiling.start();
 
         Compile compiler = new Compile(programText, TMP_COMPILE_FILE);
         compiler.compile();
 
-//        //FIXME threads in compiler
-//        try {
-//            compiling.join();
-//        }catch (InterruptedException e){
-//            e.printStackTrace();
-//            System.exit(1);
-//        }
-
-       try(FileReader reader = new FileReader(TMP_COMPILE_FILE)){
+       try(FileReader reader = new FileReader(LST_COMPILE_FILE)){
             BufferedReader br = new BufferedReader(reader);
 
             String line = br.readLine();

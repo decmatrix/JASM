@@ -83,6 +83,8 @@ public class Mnemonic {
     static boolean isHexNumber(String word){
         if(word.charAt(word.length() - 1) != 'H') return false;
 
+        if(word.equals("H")) return false;
+
         boolean flag = true;
 
         String checkLine = "0123456789ABCDEF";
@@ -106,6 +108,8 @@ public class Mnemonic {
 
     static boolean isBinNumber(String word){
         if(word.charAt(word.length() - 1) != 'B') return false;
+
+        if(word.equals("B")) return false;
 
         boolean flag = true;
 

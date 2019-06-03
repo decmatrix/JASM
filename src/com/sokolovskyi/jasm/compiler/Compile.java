@@ -1,13 +1,14 @@
 package com.sokolovskyi.jasm.compiler;
 
+import com.sokolovskyi.jasm.compiler.grammar.GrammarExcHandler;
 import com.sokolovskyi.jasm.compiler.lexis.LexemesTable;
 import com.sokolovskyi.jasm.compiler.lexis.LexicalExcHandler;
 import com.sokolovskyi.jasm.compiler.listing.Listing;
 import com.sokolovskyi.jasm.compiler.parser.TableParser;
 import com.sokolovskyi.jasm.compiler.parser.TextParser;
+import com.sokolovskyi.jasm.compiler.semantics.SemanticExcHandler;
 import com.sokolovskyi.jasm.compiler.syntax.SentenceTable;
 import com.sokolovskyi.jasm.compiler.syntax.SyntacticExcHandler;
-import com.sokolovskyi.jasm.compiler.syntax.SyntaxErrors;
 import com.sokolovskyi.jasm.compiler.syntax.SyntaxTable;
 
 import java.io.*;
@@ -25,7 +26,6 @@ public class Compile /*implements Runnable*/{
 
     //array of errors
     private String[] errors;
-
 
     public Compile(String text, String pathToCompileFile){
         this.text = text;
@@ -80,7 +80,7 @@ public class Compile /*implements Runnable*/{
     }
 
     private void initErrorsList(){
-        errors = new String[tablesOfLexemes.size()];
+        errors = new String[tablesOfLexemes.size() + 1];
 
         for(int i = 0; i < errors.length; i++){
             errors[i] = null;
@@ -108,9 +108,6 @@ public class Compile /*implements Runnable*/{
 
         //TODO see in doc of course work
 
-        //TODO create table of vars in asm
-
-
         //init list errors
         initErrorsList();
 
@@ -119,6 +116,12 @@ public class Compile /*implements Runnable*/{
 
         //parse syntactics errors
         SyntacticExcHandler.catchException(errors, syntaxTables);
+
+        //parse semantic errors
+        SemanticExcHandler.catchException(errors, syntaxTables);
+
+        //parse grammar errors
+        GrammarExcHandler.catchException(errors, tablesOfLexemes, text.split("\n"));
 
         //create listing file
         Listing listing = new Listing(text, tablesOfLexemes, errors);

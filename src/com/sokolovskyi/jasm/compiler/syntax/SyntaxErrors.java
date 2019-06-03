@@ -1,7 +1,8 @@
 package com.sokolovskyi.jasm.compiler.syntax;
 
 public final class SyntaxErrors {
-    private SyntaxErrors(){}
+    private SyntaxErrors() {
+    }
 
     static final String err = " SE <0x0> Syntactic error";
     static final String Ox1 = " SE <0x1> Expected: instruction or directive";
@@ -22,4 +23,5 @@ public final class SyntaxErrors {
     static final String Ox10 = " SE <0x10> Symbol is multidefined: ";
     static final String Ox11 = " SE <0x11> Improper operand type";
     static final String Ox12 = " SE <0x12> Operand expected";
+    static final String Ox13 = " SE <0x13> Math expression error";
 }
