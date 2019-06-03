@@ -3,6 +3,7 @@ package com.sokolovskyi.jasm.compiler.listing;
 import com.sokolovskyi.jasm.compiler.additionals.CalcMathExpr;
 import com.sokolovskyi.jasm.compiler.lexis.Lexemes;
 import com.sokolovskyi.jasm.compiler.lexis.LexemesTable;
+import com.sokolovskyi.jasm.compiler.syntax.SyntacticExcHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -78,13 +79,29 @@ final class Opcode {
         boolean flag = true;
 
         if(buffTable.length > 4) {
-            Integer res = CalcMathExpr.calcLinearExp(buffTable, 2);
+            //Integer res = CalcMathExpr.calcLinearExp(buffTable, 2);
 
-            if (res == null) opcode = "0000";
-            else {
+            StringBuilder buff = new StringBuilder();
+            for(int i = 2; i < buffTable.length; i++) buff.append(buffTable[i].getLexeme());
+
+            int res = 0;
+            //Integer res = CalcMathExpr.calcLinearExp(lexLine, 2);
+            try {
+                res = SyntacticExcHandler.eval(buff.toString());
+            }catch (Exception e){
+                opcode = "0000";
+            }
+
+            if(!opcode.equals("0000")){
                 opcode = Integer.toHexString(res);
                 flag = false;
             }
+
+//            if (res == null) opcode = "0000";
+//            else {
+//                opcode = Integer.toHexString(res);
+//                flag = false;
+//            }
         }
         else if(buffTable[2].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)){
             opcode = Integer.toHexString(Integer.parseInt(buffTable[2].getLexeme()));

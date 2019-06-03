@@ -20,7 +20,7 @@ public final class NoteColors {
     private JMenuItem colorSailorMoon;
 
     //path of file of last colors
-    private final static String PATH_LAST_FILE_COLORS = "./src/configs/lastColors.jasm";
+    private final static String PATH_LAST_FILE_COLORS = "./configs/lastColors.jasm";
 
     public NoteColors(JTextArea text, NoteLineNumbering textNumber, Font font, JMenu menu){
         this.text = text;

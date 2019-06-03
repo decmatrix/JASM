@@ -4,6 +4,7 @@ import com.sokolovskyi.jasm.compiler.additionals.CalcMathExpr;
 import com.sokolovskyi.jasm.compiler.lexis.Lexemes;
 import com.sokolovskyi.jasm.compiler.lexis.LexemesTable;
 import com.sokolovskyi.jasm.compiler.syntax.SentenceTable;
+import com.sokolovskyi.jasm.compiler.syntax.SyntacticExcHandler;
 import com.sokolovskyi.jasm.compiler.syntax.SyntaxErrors;
 import com.sokolovskyi.jasm.compiler.syntax.SyntaxTable;
 
@@ -69,7 +70,7 @@ public final class SemanticExcHandler {
             if(lexLine[sentenceLine.getPosSecondOperand()].getLexeme().equals(Lexemes.LITERALS[1])){
                 num = Integer.parseInt(lexLine[sentenceLine.getPosSecondOperand() + 1].getLexeme());
 
-                if(is8BitsNumber(num)){
+                if(is8BitsNumber(num, false)){
                     return null;
                 }
 
@@ -79,7 +80,7 @@ public final class SemanticExcHandler {
             if(lexLine[sentenceLine.getPosSecondOperand()].getLexeme().equals(Lexemes.LITERALS[2])){
                 num = -1 * Integer.parseInt(lexLine[sentenceLine.getPosSecondOperand() + 1].getLexeme());
 
-                if(is8BitsNumber(num)){
+                if(is8BitsNumber(num, false)){
                     return null;
                 }
 
@@ -89,7 +90,7 @@ public final class SemanticExcHandler {
             if(lexLine[sentenceLine.getPosSecondOperand()].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)){
                 num = Integer.parseInt(lexLine[sentenceLine.getPosSecondOperand()].getLexeme());
 
-                if(is8BitsNumber(num)){
+                if(is8BitsNumber(num, true)){
                     return null;
                 }
 
@@ -102,7 +103,7 @@ public final class SemanticExcHandler {
 
                 num = Integer.parseInt(str, 16);
 
-                if(is8BitsNumber(num)){
+                if(is8BitsNumber(num, false)){
                     return null;
                 }
 
@@ -115,7 +116,7 @@ public final class SemanticExcHandler {
 
                 num = Integer.parseInt(str, 2);
 
-                if(is8BitsNumber(num)){
+                if(is8BitsNumber(num, false)){
                     return null;
                 }
 
@@ -131,7 +132,7 @@ public final class SemanticExcHandler {
             if(lexLine[sentenceLine.getPosSecondOperand()].getLexeme().equals(Lexemes.LITERALS[1])){
                 num = Integer.parseInt(lexLine[sentenceLine.getPosSecondOperand() + 1].getLexeme());
 
-                if(is32BitsNumber(num)){
+                if(is32BitsNumber(num, true)){
                     return null;
                 }
 
@@ -141,7 +142,7 @@ public final class SemanticExcHandler {
             if(lexLine[sentenceLine.getPosSecondOperand()].getLexeme().equals(Lexemes.LITERALS[2])){
                 num = -1 * Integer.parseInt(lexLine[sentenceLine.getPosSecondOperand() + 1].getLexeme());
 
-                if(is32BitsNumber(num)){
+                if(is32BitsNumber(num, false)){
                     return null;
                 }
 
@@ -151,7 +152,7 @@ public final class SemanticExcHandler {
             if(lexLine[sentenceLine.getPosSecondOperand()].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)){
                 num = Integer.parseInt(lexLine[sentenceLine.getPosSecondOperand()].getLexeme());
 
-                if(is32BitsNumber(num)){
+                if(is32BitsNumber(num, true)){
                     return null;
                 }
 
@@ -164,7 +165,7 @@ public final class SemanticExcHandler {
 
                 num = Integer.parseInt(str, 16);
 
-                if(is32BitsNumber(num)){
+                if(is32BitsNumber(num, false)){
                     return null;
                 }
 
@@ -177,7 +178,7 @@ public final class SemanticExcHandler {
 
                 num = Integer.parseInt(str, 2);
 
-                if(is32BitsNumber(num)){
+                if(is32BitsNumber(num, false)){
                     return null;
                 }
 
@@ -197,7 +198,7 @@ public final class SemanticExcHandler {
             if(lexLine[sentenceLine.getPosSecondOperand()].getLexeme().equals(Lexemes.LITERALS[1])){
                 num = Integer.parseInt(lexLine[sentenceLine.getPosSecondOperand() + 1].getLexeme());
 
-                if(is8BitsNumber(num)){
+                if(is8BitsNumber(num, true)){
                     return null;
                 }
 
@@ -207,7 +208,7 @@ public final class SemanticExcHandler {
             if(lexLine[sentenceLine.getPosSecondOperand()].getLexeme().equals(Lexemes.LITERALS[2])){
                 num = -1 * Integer.parseInt(lexLine[sentenceLine.getPosSecondOperand() + 1].getLexeme());
 
-                if(is8BitsNumber(num)){
+                if(is8BitsNumber(num, false)){
                     return null;
                 }
 
@@ -217,7 +218,7 @@ public final class SemanticExcHandler {
             if(lexLine[sentenceLine.getPosSecondOperand()].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)){
                 num = Integer.parseInt(lexLine[sentenceLine.getPosSecondOperand()].getLexeme());
 
-                if(is8BitsNumber(num)){
+                if(is8BitsNumber(num, true)){
                     return null;
                 }
 
@@ -230,7 +231,7 @@ public final class SemanticExcHandler {
 
                 num = Integer.parseInt(str, 16);
 
-                if(is8BitsNumber(num)){
+                if(is8BitsNumber(num, false)){
                     return null;
                 }
 
@@ -243,7 +244,7 @@ public final class SemanticExcHandler {
 
                 num = Integer.parseInt(str, 2);
 
-                if(is8BitsNumber(num)){
+                if(is8BitsNumber(num, false)){
                     return null;
                 }
 
@@ -257,7 +258,7 @@ public final class SemanticExcHandler {
             if(lexLine[sentenceLine.getPosSecondOperand()].getLexeme().equals(Lexemes.LITERALS[1])){
                 num = Integer.parseInt(lexLine[sentenceLine.getPosSecondOperand() + 1].getLexeme());
 
-                if(is32BitsNumber(num)){
+                if(is32BitsNumber(num, true)){
                     return null;
                 }
 
@@ -267,7 +268,7 @@ public final class SemanticExcHandler {
             if(lexLine[sentenceLine.getPosSecondOperand()].getLexeme().equals(Lexemes.LITERALS[2])){
                 num = -1 * Integer.parseInt(lexLine[sentenceLine.getPosSecondOperand() + 1].getLexeme());
 
-                if(is32BitsNumber(num)){
+                if(is32BitsNumber(num, false)){
                     return null;
                 }
 
@@ -277,7 +278,7 @@ public final class SemanticExcHandler {
             if(lexLine[sentenceLine.getPosSecondOperand()].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)){
                 num = Integer.parseInt(lexLine[sentenceLine.getPosSecondOperand()].getLexeme());
 
-                if(is32BitsNumber(num)){
+                if(is32BitsNumber(num, true)){
                     return null;
                 }
 
@@ -290,7 +291,7 @@ public final class SemanticExcHandler {
 
                 num = Integer.parseInt(str, 16);
 
-                if(is32BitsNumber(num)){
+                if(is32BitsNumber(num, false)){
                     return null;
                 }
 
@@ -303,7 +304,7 @@ public final class SemanticExcHandler {
 
                 num = Integer.parseInt(str, 2);
 
-                if(is32BitsNumber(num)){
+                if(is32BitsNumber(num, num > 0)){
                     return null;
                 }
 
@@ -317,7 +318,7 @@ public final class SemanticExcHandler {
             if(lexLine[sentenceLine.getPosSecondOperand()].getLexeme().equals(Lexemes.LITERALS[1])){
                 num = Integer.parseInt(lexLine[sentenceLine.getPosSecondOperand() + 1].getLexeme());
 
-                if(is16BitsNumber(num)){
+                if(is16BitsNumber(num, num > 0)){
                     return null;
                 }
 
@@ -327,7 +328,7 @@ public final class SemanticExcHandler {
             if(lexLine[sentenceLine.getPosSecondOperand()].getLexeme().equals(Lexemes.LITERALS[2])){
                 num = -1 * Integer.parseInt(lexLine[sentenceLine.getPosSecondOperand() + 1].getLexeme());
 
-                if(is16BitsNumber(num)){
+                if(is16BitsNumber(num, num > 0)){
                     return null;
                 }
 
@@ -337,7 +338,7 @@ public final class SemanticExcHandler {
             if(lexLine[sentenceLine.getPosSecondOperand()].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)){
                 num = Integer.parseInt(lexLine[sentenceLine.getPosSecondOperand()].getLexeme());
 
-                if(is16BitsNumber(num)){
+                if(is16BitsNumber(num, num > 0)){
                     return null;
                 }
 
@@ -350,7 +351,7 @@ public final class SemanticExcHandler {
 
                 num = Integer.parseInt(str, 16);
 
-                if(is16BitsNumber(num)){
+                if(is16BitsNumber(num, num > 0)){
                     return null;
                 }
 
@@ -363,7 +364,7 @@ public final class SemanticExcHandler {
 
                 num = Integer.parseInt(str, 2);
 
-                if(is16BitsNumber(num)){
+                if(is16BitsNumber(num, num > 0)){
                     return null;
                 }
 
@@ -382,12 +383,16 @@ public final class SemanticExcHandler {
 
             if (lexLine.length - 3 > 2) {
 
-                Integer res = CalcMathExpr.calcLinearExp(lexLine, 2);
+                StringBuilder buff = new StringBuilder();
+                for(int i = 2; i < lexLine.length; i++) buff.append(lexLine[i].getLexeme());
+
+                //Integer res = CalcMathExpr.calcLinearExp(lexLine, 2);
+                int res = SyntacticExcHandler.eval(buff.toString());
 
                 System.out.println(lexLine[2] + "   " + res);
 
 
-                if(is8BitsNumber(res)){
+                if(is8BitsNumber(res, res > 0)){
                     return null;
                 }
 
@@ -397,7 +402,7 @@ public final class SemanticExcHandler {
             if(lexLine[2].getLexeme().equals(Lexemes.LITERALS[1])){
                 int num = Integer.parseInt(lexLine[3].getLexeme());
 
-                if(is8BitsNumber(num)){
+                if(is8BitsNumber(num, num > 0)){
                     return null;
                 }
 
@@ -407,7 +412,7 @@ public final class SemanticExcHandler {
             if(lexLine[2].getLexeme().equals(Lexemes.LITERALS[2])){
                 int num = -1 * Integer.parseInt(lexLine[3].getLexeme());
 
-                if(is8BitsNumber(num)){
+                if(is8BitsNumber(num, num > 0)){
                     return null;
                 }
 
@@ -417,7 +422,7 @@ public final class SemanticExcHandler {
             if(lexLine[2].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)){
                 int num = Integer.parseInt(lexLine[2].getLexeme());
 
-                if(is8BitsNumber(num)){
+                if(is8BitsNumber(num, num > 0)){
                     return null;
                 }
 
@@ -430,7 +435,7 @@ public final class SemanticExcHandler {
 
                 int num = Integer.parseInt(str, 16);
 
-                if(is8BitsNumber(num)){
+                if(is8BitsNumber(num, num > 0)){
                     return null;
                 }
 
@@ -443,7 +448,7 @@ public final class SemanticExcHandler {
 
                 int num = Integer.parseInt(str, 2);
 
-                if(is8BitsNumber(num)){
+                if(is8BitsNumber(num, num > 0)){
                     return null;
                 }
 
@@ -455,11 +460,13 @@ public final class SemanticExcHandler {
 
             if (lexLine.length - 3 > 0) {
 
-                Integer res = CalcMathExpr.calcLinearExp(lexLine, 2);
+                StringBuilder buff = new StringBuilder();
+                for(int i = 2; i < lexLine.length; i++) buff.append(lexLine[i].getLexeme());
 
-                System.out.println(lexLine[2] + "   " + res);
+                //Integer res = CalcMathExpr.calcLinearExp(lexLine, 2);
+                int res = SyntacticExcHandler.eval(buff.toString());
 
-                if(is16BitsNumber(res)){
+                if(is16BitsNumber(res, res > 0)){
                     return null;
                 }
 
@@ -469,7 +476,7 @@ public final class SemanticExcHandler {
             if(lexLine[2].getLexeme().equals(Lexemes.LITERALS[1])){
                 int num = Integer.parseInt(lexLine[3].getLexeme());
 
-                if(is16BitsNumber(num)){
+                if(is16BitsNumber(num, true)){
                     return null;
                 }
 
@@ -479,7 +486,7 @@ public final class SemanticExcHandler {
             if(lexLine[2].getLexeme().equals(Lexemes.LITERALS[2])){
                 int num = -1 * Integer.parseInt(lexLine[3].getLexeme());
 
-                if(is16BitsNumber(num)){
+                if(is16BitsNumber(num, false)){
                     return null;
                 }
 
@@ -489,7 +496,7 @@ public final class SemanticExcHandler {
             if(lexLine[2].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)){
                 int num = Integer.parseInt(lexLine[2].getLexeme());
 
-                if(is16BitsNumber(num)){
+                if(is16BitsNumber(num, num > 0)){
                     return null;
                 }
 
@@ -502,7 +509,7 @@ public final class SemanticExcHandler {
 
                 int num = Integer.parseInt(str, 16);
 
-                if(is16BitsNumber(num)){
+                if(is16BitsNumber(num, num > 0)){
                     return null;
                 }
 
@@ -515,7 +522,7 @@ public final class SemanticExcHandler {
 
                 int num = Integer.parseInt(str, 2);
 
-                if(is16BitsNumber(num)){
+                if(is16BitsNumber(num, num > 0)){
                     return null;
                 }
 
@@ -525,13 +532,15 @@ public final class SemanticExcHandler {
 
         if(lexLine[1].getLexeme().toUpperCase().equals(Lexemes.DATA_TYPES[2])){
 
-            if (lexLine.length - 3 > 2) {
+            if (lexLine.length >= 5) {
 
-                Integer res = CalcMathExpr.calcLinearExp(lexLine, 2);
+                StringBuilder buff = new StringBuilder();
+                for(int i = 2; i < lexLine.length; i++) buff.append(lexLine[i].getLexeme());
 
-                System.out.println(lexLine[2] + "   " + res);
+                //Integer res = CalcMathExpr.calcLinearExp(lexLine, 2);
+                int res = SyntacticExcHandler.eval(buff.toString());
 
-                if(is32BitsNumber(res)){
+                if(is32BitsNumber(res, res > 0)){
                     return null;
                 }
 
@@ -541,7 +550,7 @@ public final class SemanticExcHandler {
             if(lexLine[2].getLexeme().equals(Lexemes.LITERALS[1])){
                 long num = Integer.parseInt(lexLine[3].getLexeme());
 
-                if(is32BitsNumber(num)){
+                if(is32BitsNumber(num, num > 0)){
                     return null;
                 }
 
@@ -551,7 +560,7 @@ public final class SemanticExcHandler {
             if(lexLine[2].getLexeme().equals(Lexemes.LITERALS[2])){
                 long num = -1 * Integer.parseInt(lexLine[3].getLexeme());
 
-                if(is32BitsNumber(num)){
+                if(is32BitsNumber(num, num > 0)){
                     return null;
                 }
 
@@ -561,7 +570,7 @@ public final class SemanticExcHandler {
             if(lexLine[2].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)){
                 long num = Integer.parseInt(lexLine[2].getLexeme());
 
-                if(is32BitsNumber(num)){
+                if(is32BitsNumber(num, num > 0)){
                     return null;
                 }
 
@@ -574,7 +583,7 @@ public final class SemanticExcHandler {
 
                 long num = Integer.parseInt(str, 16);
 
-                if(is32BitsNumber(num)){
+                if(is32BitsNumber(num, num > 0)){
                     return null;
                 }
 
@@ -587,7 +596,7 @@ public final class SemanticExcHandler {
 
                 long num = Integer.parseInt(str, 2);
 
-                if(is32BitsNumber(num)){
+                if(is32BitsNumber(num, num > 0)){
                     return null;
                 }
 
@@ -601,15 +610,30 @@ public final class SemanticExcHandler {
     }
 
     /* additional methods */
-    private static boolean is8BitsNumber(int num){
+    private static boolean is8BitsNumber(int num, boolean flag){
+
+        if(num > 0){
+            return num >= 0 && num <= 255;
+        }
+
         return num >= -128 && num <= 127;
     }
 
-    private static boolean is32BitsNumber(long num){
-        return num >= -140737488355328L && num <= 140737488355327L;
+    private static boolean is32BitsNumber(long num, boolean flag){
+
+        if(num > 0){
+            return num >= 0 && num <= 4294967295L;
+        }
+
+        return num >= -2147483648L && num <= 2147483647L;
     }
 
-    private static boolean is16BitsNumber(int num){
+    private static boolean is16BitsNumber(int num, boolean flag){
+
+        if(num > 0){
+            return num >= 0 && num <= 65535;
+        }
+
         return num >= -32768 && num <= 32767;
     }
 }

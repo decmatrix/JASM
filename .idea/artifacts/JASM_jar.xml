@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="JASM:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/JASM_jar</output-path>
+    <root id="archive" name="JASM.jar">
+      <element id="module-output" name="JASM" />
+    </root>
+  </artifact>
+</component>

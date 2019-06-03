@@ -167,7 +167,7 @@ public class SyntacticExcHandler {
                 if(p != lexLine.length - 1){
                     p++;
 
-                   if(lexLine.length - 1 - p > 2){
+                   if(lexLine.length >= 5/* ((lexLine[lexLine.length - 1].getLinkLexeme().equals(Lexemes.DEC_CONSTANT) || lexLine[lexLine.length - 1].getLexeme().equals(")")))*/){
                         int pos_e = lexLine.length - 1;
 
                         String res = checkMathExp(lexLine, p, pos_e);
@@ -288,7 +288,8 @@ public class SyntacticExcHandler {
         }
 
         try {
-            double res = eval(exp.toString());
+            int res = eval(exp.toString());
+            System.out.println("res ----------------------- " + res);
         }catch (Exception e){
             return SyntaxErrors.Ox13;
         }
@@ -296,7 +297,7 @@ public class SyntacticExcHandler {
         return null;
     }
 
-    private static double eval(final String str) {
+    public static int eval(final String str) {
         return new Object() {
             int pos = -1, ch;
 
@@ -313,15 +314,15 @@ public class SyntacticExcHandler {
                 return false;
             }
 
-            double parse() {
+            int parse() {
                 nextChar();
-                double x = parseExpression();
+                int x = parseExpression();
                 if (pos < str.length()) throw new RuntimeException("Unexpected: " + (char)ch);
                 return x;
             }
 
-            double parseExpression() {
-                double x = parseTerm();
+            int parseExpression() {
+                int x = parseTerm();
                 for (;;) {
                     if      (eat('+')) x += parseTerm(); // addition
                     else if (eat('-')) x -= parseTerm(); // subtraction
@@ -329,26 +330,26 @@ public class SyntacticExcHandler {
                 }
             }
 
-            double parseTerm() {
-                double x = parseFactor();
+            int parseTerm() {
+                int x = parseFactor();
                 for (;;) {
                     if      (eat('*')) x *= parseFactor(); // multiplication
                     else return x;
                 }
             }
 
-            double parseFactor() {
+            int parseFactor() {
                 if (eat('+')) return parseFactor(); // unary plus
                 if (eat('-')) return -parseFactor(); // unary minus
 
-                double x;
+                int x;
                 int startPos = this.pos;
                 if (eat('(')) { // parentheses
                     x = parseExpression();
                     eat(')');
                 } else if ((ch >= '0' && ch <= '9') || ch == '.') { // numbers
                     while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
-                    x = Double.parseDouble(str.substring(startPos, this.pos));
+                    x = Integer.parseInt(str.substring(startPos, this.pos));
                 } else {
                     throw new RuntimeException("Unexpected: " + (char)ch);
                 }
