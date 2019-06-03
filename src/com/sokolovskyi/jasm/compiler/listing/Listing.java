@@ -55,8 +55,8 @@ public class Listing {
     private void initAdresses(){
         if(adresses == null) return;
 
-        for(int adr : adresses){
-            adr = -1;
+        for(int adr = 0; adr < adresses.length; adr++){
+            adresses[adr] = -1;
         }
     }
 

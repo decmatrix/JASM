@@ -581,7 +581,7 @@ public final class SemanticExcHandler {
 
                 String str = lexLine[2].getLexeme().toUpperCase().replaceAll("H", "");
 
-                long num = Integer.parseInt(str, 16);
+                long num = Long.parseLong(str, 16);
 
                 if(is32BitsNumber(num, num > 0)){
                     return null;

@@ -1261,14 +1261,22 @@ public class SyntacticExcHandler {
         }
 
         if (f || tables[pos_s].getLexeme().equals(Lexemes.LITERALS[4])) {
+
             if (tables[pos_s + 1].getLinkLexeme().equals(Lexemes.REGISTER_32)) {
                 pos_s++;
 
                 if (tables[pos_s + 1].getLexeme().equals(Lexemes.LITERALS[1])) {
                     pos_s++;
 
+                    if(tables[pos_s + 1].getLexeme().toUpperCase().equals("ESP")){
+                        return SyntaxErrors.OxB;
+                    }
+
                     if (tables[pos_s + 1].getLinkLexeme().equals(Lexemes.REGISTER_32)) {
                         pos_s++;
+
+                        //TODO for [reg32 + reg32]
+                        //if(tables[pos_s + 1].getLexeme().equals(Lexemes.LITERALS[5])) return null;
 
                         if (tables[pos_s + 1].getLexeme().equals(Lexemes.LITERALS[1])) {
                             pos_s++;
@@ -1295,7 +1303,7 @@ public class SyntacticExcHandler {
                         }
 
                         if (tables[pos_s + 1].getLinkLexeme().equals(Lexemes.LITERAL)) {
-                            return SyntaxErrors.OxA;
+                            return SyntaxErrors.Ox4;
                         }
 
                         if (tables[pos_s + 1].getLinkLexeme().equals(Lexemes.IDENTIFIER)) {

@@ -511,7 +511,11 @@ final class Opcode {
     static String calcOpcodeJB(LexemesTable[] buffTable, Map<String, Integer[]> labelAdreses, int[] adresses, int pos){
         String opcode = "";
 
-        if(adresses[pos] <= labelAdreses.get(buffTable[1].getLexeme().toUpperCase())[0]){
+        System.out.println("DEBUGG: " + labelAdreses.get(buffTable[1].getLexeme().toUpperCase())[0]);
+        System.out.println("DEBUGG: " + adresses[pos + 1]);
+
+
+        if(adresses[pos] < labelAdreses.get(buffTable[1].getLexeme().toUpperCase())[0]){
             opcode = "OF 82 ";
 
             String buffAdress = "" + Integer.toHexString(labelAdreses.get(buffTable[1].getLexeme().toUpperCase())[0]);
@@ -535,6 +539,10 @@ final class Opcode {
                     break;
                 }
             }
+
+            for(int x : adresses) System.out.println("EEEEEE: " + x);
+
+            System.out.println("DEBUG: " + nextAdr);
 
             int del = labelAdreses.get(buffTable[1].getLexeme().toUpperCase())[0] - nextAdr;
 
@@ -563,10 +571,15 @@ final class Opcode {
 
             int ladr = labelAdreses.get(buffTable[1].getLexeme().toUpperCase())[0];
 
+            System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRR: " + ladr);
+            System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRR: " + adresses[pos]);
+
             if(adresses[pos] < ladr){
+
                 int del = ladr - adresses[pos] - 2;
 
-                if(del < -127 || del > 127){
+                if(del < -128 || del > 127){
+
                     opcode = "E9 ";
 
                     String str = Integer.toHexString(labelAdreses.get(buffTable[1].getLexeme().toUpperCase())[0]);
@@ -584,8 +597,11 @@ final class Opcode {
 
                     opcode += buff;
                     opcode += " 90 90 90";
+                    return opcode;
                 }
+
             }else{
+
                 int nextAdr = 0;
                 int i = pos;
 
@@ -598,9 +614,10 @@ final class Opcode {
                     }
                 }
 
+
                 int del = labelAdreses.get(buffTable[1].getLexeme().toUpperCase())[0] - nextAdr;
 
-                if(del < -127 || del > 127) {
+                if(del < -122 || del > 127) {
                     opcode = "E9 ";
 
                     String str = Integer.toHexString(labelAdreses.get(buffTable[1].getLexeme().toUpperCase())[0]);
@@ -612,6 +629,8 @@ final class Opcode {
                     String buff = Integer.toHexString(del);
 
                     opcode += buff.substring(buff.length() - 2, buff.length());
+
+                    if(opcode.length() == 2) return "EB " + opcode;
                 }
             }
 
