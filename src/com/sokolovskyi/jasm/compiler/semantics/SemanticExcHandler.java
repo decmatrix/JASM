@@ -311,6 +311,65 @@ public final class SemanticExcHandler {
             }
         }
 
+        if(lexLine[sentenceLine.getPosFirstOperand()].getLexeme().toUpperCase().equals(Lexemes.DIRECTIVES[4])){
+            int num  = 0;
+
+            if(lexLine[sentenceLine.getPosSecondOperand()].getLexeme().equals(Lexemes.LITERALS[1])){
+                num = Integer.parseInt(lexLine[sentenceLine.getPosSecondOperand() + 1].getLexeme());
+
+                if(is16BitsNumber(num)){
+                    return null;
+                }
+
+                return pattern + SemanticErrors.Ox2;
+            }
+
+            if(lexLine[sentenceLine.getPosSecondOperand()].getLexeme().equals(Lexemes.LITERALS[2])){
+                num = -1 * Integer.parseInt(lexLine[sentenceLine.getPosSecondOperand() + 1].getLexeme());
+
+                if(is16BitsNumber(num)){
+                    return null;
+                }
+
+                return pattern + SemanticErrors.Ox2;
+            }
+
+            if(lexLine[sentenceLine.getPosSecondOperand()].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)){
+                num = Integer.parseInt(lexLine[sentenceLine.getPosSecondOperand()].getLexeme());
+
+                if(is16BitsNumber(num)){
+                    return null;
+                }
+
+                return pattern + SemanticErrors.Ox2;
+            }
+
+            if(lexLine[sentenceLine.getPosSecondOperand()].getLinkLexeme().equals(Lexemes.HEX_CONSTANT)){
+
+                String str = lexLine[sentenceLine.getPosSecondOperand()].getLexeme().toUpperCase().replaceAll("H", "");
+
+                num = Integer.parseInt(str, 16);
+
+                if(is16BitsNumber(num)){
+                    return null;
+                }
+
+                return pattern + SemanticErrors.Ox2;
+            }
+
+            if(lexLine[sentenceLine.getPosSecondOperand()].getLinkLexeme().equals(Lexemes.BIN_CONSTANT)){
+
+                String str = lexLine[sentenceLine.getPosSecondOperand()].getLexeme().toUpperCase().replaceAll("B", "");
+
+                num = Integer.parseInt(str, 2);
+
+                if(is16BitsNumber(num)){
+                    return null;
+                }
+
+                return pattern + SemanticErrors.Ox2;
+            }
+        }
         return pattern + SemanticErrors.Ox1;
     }
 

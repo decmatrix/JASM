@@ -79,6 +79,8 @@ class NoteFrame extends JFrame {
         theText.setTabSize(2);
         //set cursor width
         theText.putClientProperty("caretWidth", 3);
+
+        theText.setFont( new Font("Courier New", Font.PLAIN, 14));
     }
 
     private void initComponents(){
@@ -112,7 +114,7 @@ class NoteFrame extends JFrame {
         fileMenu.add(menuSave);
 
         fileMenu.addSeparator();
-        menuExit = new JMenuItem("exit ⇱");
+        menuExit = new JMenuItem("exit");
         menuExit.setFont(font);
         fileMenu.add(menuExit);
 
@@ -132,7 +134,7 @@ class NoteFrame extends JFrame {
         JMenu toolsMenu = new JMenu("Tools");
         toolsMenu.setFont(font);
 
-        menuCompile = new JMenuItem("run ▶\t");
+        menuCompile = new JMenuItem("run >>\t");
         menuCompile.setFont(font);
         toolsMenu.add(menuCompile);
 

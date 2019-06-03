@@ -183,14 +183,30 @@ public class SyntacticExcHandler {
                         return pattern + res;
                     }
 
-                    if(lexLine[p].getLexeme().equals(Lexemes.LITERALS[1]) || lexLine[p].getLexeme().equals(Lexemes.LITERALS[2])){
+                    if(lexLine[p].getLexeme().equals(Lexemes.LITERALS[1]) || lexLine[p].getLexeme().equals(Lexemes.LITERALS[2])) {
 
-                        if(p != lexLine.length - 1){
+                        if (p != lexLine.length - 1) {
                             p++;
 
-                            if(lexLine[p].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)){
+                            if (lexLine[p].getLinkLexeme().equals(Lexemes.DEC_CONSTANT)) {
 
-                                if(isMultiDefId(lexLine[0].getLexeme())){
+                                if (p != lexLine.length - 1) {
+                                    p++;
+
+                                    if (lexLine[p].getLinkLexeme().equals(Lexemes.IDENTIFIER)) {
+                                        if (!isExistId(lexLine[p].getLexeme())) {
+                                            return pattern + SyntaxErrors.Ox2 + lexLine[p].getLexeme();
+                                        }
+                                    }
+
+                                    if (lexLine[p].getLinkLexeme().equals(Lexemes.LITERAL)) {
+                                        return pattern + SyntaxErrors.Ox4;
+                                    }
+
+                                    return pattern + SyntaxErrors.Ox3;
+                                }
+
+                                if (isMultiDefId(lexLine[0].getLexeme())) {
                                     return pattern + SyntaxErrors.Ox10 + lexLine[0].getLexeme();
                                 }
 
@@ -204,9 +220,25 @@ public class SyntacticExcHandler {
                     }
 
                     if(lexLine[p].getLinkLexeme().equals(Lexemes.DEC_CONSTANT) || lexLine[p].getLinkLexeme().equals(Lexemes.HEX_CONSTANT) ||
-                            lexLine[p].getLinkLexeme().equals(Lexemes.BIN_CONSTANT)){
+                            lexLine[p].getLinkLexeme().equals(Lexemes.BIN_CONSTANT)) {
 
-                        if(isMultiDefId(lexLine[0].getLexeme())){
+                        if (p != lexLine.length - 1) {
+                            p++;
+
+                            if (lexLine[p].getLinkLexeme().equals(Lexemes.IDENTIFIER)) {
+                                if (!isExistId(lexLine[p].getLexeme())) {
+                                    return pattern + SyntaxErrors.Ox2 + lexLine[p].getLexeme();
+                                }
+                            }
+
+                            if (lexLine[p].getLinkLexeme().equals(Lexemes.LITERAL)) {
+                                return pattern + SyntaxErrors.Ox4;
+                            }
+
+                            return pattern + SyntaxErrors.Ox3;
+                        }
+
+                        if (isMultiDefId(lexLine[0].getLexeme())) {
                             return pattern + SyntaxErrors.Ox10 + lexLine[0].getLexeme();
                         }
 
@@ -255,20 +287,75 @@ public class SyntacticExcHandler {
             exp.append(lexLine[i].getLexeme());
         }
 
-        if(!eval(exp.toString())){
+        try {
+            double res = eval(exp.toString());
+        }catch (Exception e){
             return SyntaxErrors.Ox13;
         }
 
         return null;
     }
 
-    private static boolean eval(String exp){
+    private static double eval(final String str) {
+        return new Object() {
+            int pos = -1, ch;
 
-        char[] buff = exp.toCharArray();
+            void nextChar() {
+                ch = (++pos < str.length()) ? str.charAt(pos) : -1;
+            }
 
+            boolean eat(int charToEat) {
+                while (ch == ' ') nextChar();
+                if (ch == charToEat) {
+                    nextChar();
+                    return true;
+                }
+                return false;
+            }
 
+            double parse() {
+                nextChar();
+                double x = parseExpression();
+                if (pos < str.length()) throw new RuntimeException("Unexpected: " + (char)ch);
+                return x;
+            }
 
-        return true; //false
+            double parseExpression() {
+                double x = parseTerm();
+                for (;;) {
+                    if      (eat('+')) x += parseTerm(); // addition
+                    else if (eat('-')) x -= parseTerm(); // subtraction
+                    else return x;
+                }
+            }
+
+            double parseTerm() {
+                double x = parseFactor();
+                for (;;) {
+                    if      (eat('*')) x *= parseFactor(); // multiplication
+                    else return x;
+                }
+            }
+
+            double parseFactor() {
+                if (eat('+')) return parseFactor(); // unary plus
+                if (eat('-')) return -parseFactor(); // unary minus
+
+                double x;
+                int startPos = this.pos;
+                if (eat('(')) { // parentheses
+                    x = parseExpression();
+                    eat(')');
+                } else if ((ch >= '0' && ch <= '9') || ch == '.') { // numbers
+                    while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
+                    x = Double.parseDouble(str.substring(startPos, this.pos));
+                } else {
+                    throw new RuntimeException("Unexpected: " + (char)ch);
+                }
+
+                return x;
+            }
+        }.parse();
     }
 
 

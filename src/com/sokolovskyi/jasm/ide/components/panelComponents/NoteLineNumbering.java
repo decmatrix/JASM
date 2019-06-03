@@ -11,6 +11,8 @@ public class NoteLineNumbering extends JTextArea {
     public NoteLineNumbering(JTextArea theText){
         this.theText = theText;
 
+        this.setFont(new Font("Courier New", Font.PLAIN, 14));
+
         setBackground(new Color(0, 0, 0));
         setForeground(new Color(255, 255, 255));
 

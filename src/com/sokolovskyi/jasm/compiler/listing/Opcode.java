@@ -149,7 +149,11 @@ final class Opcode {
             opcode += "66| ";
         }
 
-        opcode += "FE ";
+        if(buffTable[1].getLexeme().toUpperCase().equals(Lexemes.DIRECTIVES[6])){
+            opcode += "FE ";
+        }else{
+            opcode += "FF ";
+        }
 
         int p = 0;
         while(!buffTable[p].getLexeme().equals(Lexemes.LITERALS[4]))p++;
@@ -396,7 +400,11 @@ final class Opcode {
             buff += "1";
         }
 
-        opcode += Integer.toHexString(Integer.parseInt(buff, 2)) + " ";
+        if(buffTable[1].getLexeme().toUpperCase().equals(Lexemes.DIRECTIVES[6])){
+            opcode += "80 ";
+        }else {
+            opcode += Integer.toHexString(Integer.parseInt(buff, 2)) + " ";
+        }
 
 
         int p = 0;
