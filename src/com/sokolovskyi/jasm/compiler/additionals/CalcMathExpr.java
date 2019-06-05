@@ -1,3 +1,6 @@
+/**
+ * Додаткові функції для позрахунків
+ */
 package com.sokolovskyi.jasm.compiler.additionals;
 
 import com.sokolovskyi.jasm.compiler.lexis.LexemesTable;

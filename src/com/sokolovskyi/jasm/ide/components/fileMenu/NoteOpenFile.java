@@ -83,10 +83,9 @@ public class NoteOpenFile {
             }
 
         }catch (IOException e){
-            e.printStackTrace();
+           return;
 
-
-            error.setVisible(true);
+            //error.setVisible(true);
         }catch (NullPointerException ignored){
 
         }

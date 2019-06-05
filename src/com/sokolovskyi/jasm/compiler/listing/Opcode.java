@@ -511,9 +511,6 @@ final class Opcode {
     static String calcOpcodeJB(LexemesTable[] buffTable, Map<String, Integer[]> labelAdreses, int[] adresses, int pos){
         String opcode = "";
 
-        System.out.println("DEBUGG: " + labelAdreses.get(buffTable[1].getLexeme().toUpperCase())[0]);
-        System.out.println("DEBUGG: " + adresses[pos + 1]);
-
 
         if(adresses[pos] < labelAdreses.get(buffTable[1].getLexeme().toUpperCase())[0]){
             opcode = "OF 82 ";
@@ -540,9 +537,6 @@ final class Opcode {
                 }
             }
 
-            for(int x : adresses) System.out.println("EEEEEE: " + x);
-
-            System.out.println("DEBUG: " + nextAdr);
 
             int del = labelAdreses.get(buffTable[1].getLexeme().toUpperCase())[0] - nextAdr;
 
@@ -570,9 +564,6 @@ final class Opcode {
         if(buffTable[1].getLinkLexeme().equals(Lexemes.IDENTIFIER)){
 
             int ladr = labelAdreses.get(buffTable[1].getLexeme().toUpperCase())[0];
-
-            System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRR: " + ladr);
-            System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRR: " + adresses[pos]);
 
             if(adresses[pos] < ladr){
 
