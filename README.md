@@ -1,4 +1,4 @@
-# JASM compiler (Assembler compiler on Java)
+# JASM compiler (Assembler compiler on Java) by Bohdan Sokolovskyi
 
 ![log](https://github.com/bohdan-sokolovskyi/JASM-assembler-compiler/blob/master/src/assets/logo.png)
 
