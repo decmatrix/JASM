@@ -1,9 +1,9 @@
-# JASM compiler (Assembler compiler on Java) by Bohdan Sokolovskyi
+# JASM compiler (Assembler compiler in Java) by Bohdan Sokolovskyi
 
 ![log](https://github.com/bohdan-sokolovskyi/JASM-assembler-compiler/blob/master/src/assets/logo.png)
 
 ## Description
-* Text editor and assembler compiler on java
+* Text editor and assembler compiler in java
 * Compiler v 3.0 beta
 * Simplified version of assembler compiler (intel x32) and text editor with color themes
 
