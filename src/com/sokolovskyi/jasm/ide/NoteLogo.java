@@ -26,7 +26,7 @@ class NoteLogo extends JFrame{
         //setIconImage(new ImageIcon("./src/asserts/logo64_64.png").getImage());
 
         JLabel logo = new JLabel();
-        logo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asserts/logo.png")));
+        logo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/logo.png")));
         logo.setHorizontalAlignment(JLabel.CENTER);
 
         JPanel logoPanel = new JPanel(new BorderLayout());
