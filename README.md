@@ -8,7 +8,7 @@
 * Simplified version of assembler compiler (intel x32) and text editor with color themes
 
 ## Demonstration
-* Program demo:
+* IDE:
 ![demo 1](https://github.com/bohdan-sokolovskyi/JASM-assembler-compiler/blob/master/src/assets/compiler-demo-1.png)
 ![demo 2](https://github.com/bohdan-sokolovskyi/JASM-assembler-compiler/blob/master/src/assets/compiler-demo-2.png)
 * Input:
