@@ -30,8 +30,8 @@ start:
 
     cli ; complete
 
-    inc eax ; complite
-    inc al ; complite
+    inc eax ; complete
+    inc al ; complete
 
     dec dword ptr [edx + esi + 6]
 
