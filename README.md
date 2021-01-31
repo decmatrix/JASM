@@ -6,6 +6,75 @@
 * Simplified version of assembler compiler (intel x16) and text editor with color themes
 
 ## Demonstration
+* Input:
+```asm
+data segment
+    valdb1 db 11b
+    valdb2 db 24
+    valdb3 db 3h
+    valdb4 db 120
+
+    valdw1 dw 123*(24+3)
+    valdw2 dw 110011111001b
+    valdw3 dw 0cf9h
+    valdw4 dw -345
+
+    valdd1 dd (23+7)*(11+4)
+    valdd2 dd 111000010b
+    valdd3 dd 01c2h
+    valdd4 dd -1024
+data ends
+
+code segment 
+start:
+
+    cli ; complete
+
+    inc eax ; complite
+    inc al ; complite
+
+    dec dword ptr [edx + esi + 6]
+
+    add bl, bh
+    add ebx, ebx
+    
+    add ah, bh
+                            
+    valume dd -43
+
+    or al, [edx + Esi + 6]
+    or ecx, [ebx + eCx + 12]
+
+    and [edx + eSi + 6], ah
+    and [ebx + ecx + 12], eax
+
+    mov al, 15
+    mov bh, -105
+    mov eax, 12h
+    mov ecx, -155
+    mov ebx, 11110011b
+    mov ebx, 243
+
+    cmp dword Ptr ds:[edx + esi + 3], 11110011b
+    cmp dword ptr ss:[esi + eax + 10], 01c2h
+
+    jb ljb
+
+    ljb:
+
+    
+    jmp ljmp
+
+    ljmp:
+
+    jmp [eax + esi + 4]
+    jmp ss:[ebp + esi + 2]
+
+code ends 
+end
+
+```
+
 * Output:
 ```
           JASM Java Assembly Compiler v.0.3 beta        Wed Jun 05 08:48:26 MSK 2019
